@@ -72,22 +72,14 @@ class MediaIcon(WinIcon):
 
         if self.__volume.can_mount():
             if self.__volume.get_mount():
-                unmount_item = gtk.ImageMenuItem()
+                unmount_item = gtk.ImageMenuItem(gtk.STOCK_CANCEL)
                 unmount_item.set_label(_("Unmount"))
-                unmount_image = gtk.image_new_from_pixbuf(
-                    ICON_THEME.load_icon("rox-mount", gtk.ICON_SIZE_MENU, 0)
-                )
-                unmount_item.set_image(unmount_image)
                 unmount_item.connect("activate", self.__unmount) 
                 menu.prepend(unmount_item)
             else:
-                mount_item = gtk.ImageMenuItem()
+                mount_item = gtk.ImageMenuItem(gtk.STOCK_YES)
                 mount_item.set_label(_("Mount"))
-                mount_image = gtk.image_new_from_pixbuf(
-                    ICON_THEME.load_icon("rox-mounted", gtk.ICON_SIZE_MENU, 0)
-                )
                 mount_item.connect("activate", self.__mount)
-                mount_item.set_image(mount_image)
                 menu.prepend(mount_item)
 
             menu.prepend(gtk.SeparatorMenuItem())

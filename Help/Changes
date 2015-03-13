@@ -4,6 +4,7 @@
 
 0.0.2
 ~~~~~
+Fixed images in Mount/Unmount menu items.
 Show mount status in emblem.
 Don't use UUIDs as icon ID, as they sometimes do not exist. (reported by Abrolag)
 
