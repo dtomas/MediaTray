@@ -16,11 +16,7 @@ class MediaIconManager(WinIconManager):
         self.__volume_monitor = gio.volume_monitor_get()
 
         for volume in self.__volume_monitor.get_volumes():
-            if not volume.get_drive().is_media_removable():
-                continue
-            icon = MediaIcon(self.__icon_config, self.__win_config, volume)
-            self.tray.add_icon(None, volume.get_uuid(), icon)
-            self.icon_added(icon)
+            self.__volume_added(self.__volume_monitor, volume)
             yield None
 
         for x in WinIconManager.init(self):
@@ -31,11 +27,11 @@ class MediaIconManager(WinIconManager):
 
     def __volume_added(self, volume_monitor, volume):
         icon = MediaIcon(self.icon_config, self.__win_config, volume)
-        self.tray.add_icon(None, volume.get_uuid(), icon)
+        self.tray.add_icon(None, volume, icon)
         self.icon_added(icon)
 
     def __volume_removed(self, volume_monitor, volume):
-        self.tray.remove_icon(volume.get_uuid())
+        self.tray.remove_icon(volume)
 
     icon_config = property(lambda self : self.__icon_config)
     win_config = property(lambda self : self.__win_config)
