@@ -142,6 +142,8 @@ class MediaIcon(WinIcon):
         return self.__volume.get_name()
 
     def make_emblem(self):
+        if not self.__volume.can_mount():
+            return None
         return (
             emblem_rox_mount if self.__volume.get_mount() is None
             else emblem_rox_mounted
