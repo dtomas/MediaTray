@@ -36,6 +36,8 @@ class MediaIcon(WinIcon):
             window.close(0)
 
     def __drag_data_get(self, widget, context, data, info, time):
+        if not self.visible_windows:
+            return
         xid = self.visible_windows[0].get_xid()
         data.set(data.target, 8, apply(struct.pack, ['1i', xid]))
 
