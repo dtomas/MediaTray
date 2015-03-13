@@ -2,6 +2,11 @@
 			Shows removable media
 			by Dennis Tomas
 
+0.0.2
+~~~~~
+Show mount status in emblem.
+Don't use UUIDs as icon ID, as they sometimes do not exist. (reported by Abrolag)
+
 0.0.1
 ~~~~~
 Initial release.

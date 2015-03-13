@@ -6,6 +6,16 @@ from traylib.winicon import WinIcon
 from traylib.winmenu import get_filer_window_path
 
 
+icons_dir = os.path.join(rox.app_dir, 'icons')
+
+emblem_rox_mounted = gtk.gdk.pixbuf_new_from_file(
+    os.path.join(icons_dir, 'rox-mounted.png')
+)
+emblem_rox_mount = gtk.gdk.pixbuf_new_from_file(
+    os.path.join(icons_dir, 'rox-mount.png')
+)
+
+
 class MediaIcon(WinIcon):
 
     def __init__(self, icon_config, win_config, volume):
@@ -29,6 +39,7 @@ class MediaIcon(WinIcon):
         self.update_visibility()
         self.update_icon()
         self.update_name()
+        self.update_emblem()
         self.update_tooltip()
 
     def __removed(self, volume):
@@ -86,7 +97,9 @@ class MediaIcon(WinIcon):
         return menu
 
     def __unmounted(self, mount):
+        self.update_emblem()
         mount.disconnect(self.__unmount_handler)
+        self.__unmount_handler = None
         self.__removed(self.__volume)
 
     def __mount(self, menu_item=None, on_mount=None):
@@ -94,9 +107,12 @@ class MediaIcon(WinIcon):
             if self.__volume.mount_finish(result):
                 if on_mount is not None:
                     on_mount(self.__volume.get_mount())
+                if self.__unmount_handler is not None:
+                    volume.get_mount().disconnect(self.__unmount_handler)
                 self.__unmount_handler = volume.get_mount().connect(
                     "unmounted", self.__unmounted
                 )
+                self.update_emblem()
         self.__volume.mount(None, mounted)
 
     def __unmount(self, menu_item=None):
@@ -133,6 +149,12 @@ class MediaIcon(WinIcon):
 
     def make_name(self):
         return self.__volume.get_name()
+
+    def make_emblem(self):
+        return (
+            emblem_rox_mount if self.__volume.get_mount() is None
+            else emblem_rox_mounted
+        )
 
     def should_hide_if_no_visible_windows(self):
         return False
