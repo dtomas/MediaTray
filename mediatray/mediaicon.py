@@ -3,6 +3,7 @@ from rox import filer
 
 from traylib import *
 from traylib.winicon import WinIcon
+from traylib.winmenu import get_filer_window_path
 
 
 class MediaIcon(WinIcon):
@@ -19,6 +20,11 @@ class MediaIcon(WinIcon):
                             gtk.gdk.ACTION_MOVE)
         self.connect("drag-data-get", self.__drag_data_get)
         self.__volume.connect("removed", self.__removed)
+
+        if self.__volume.get_mount() is not None:
+            self.__unmount_handler = self.__volume.get_mount().connect(
+                "unmounted", self.__unmounted
+            )
 
         self.update_visibility()
         self.update_icon()
@@ -77,11 +83,18 @@ class MediaIcon(WinIcon):
             menu.prepend(open_item)
         return menu
 
+    def __unmounted(self, mount):
+        mount.disconnect(self.__unmount_handler)
+        self.__removed(self.__volume)
+
     def __mount(self, menu_item=None, on_mount=None):
         def mounted(volume, result):
-            if on_mount is not None:
-                on_mount(self.__volume.get_mount())
-            self.__volume.mount_finish(result)
+            if self.__volume.mount_finish(result):
+                if on_mount is not None:
+                    on_mount(self.__volume.get_mount())
+                self.__unmount_handler = volume.get_mount().connect(
+                    "unmounted", self.__unmounted
+                )
         self.__volume.mount(None, mounted)
 
     def __unmount(self, menu_item=None):
@@ -127,5 +140,5 @@ class MediaIcon(WinIcon):
         if mount is None:
             return False
         root = mount.get_root()
-        path = os.path.expanduser(window.get_name())
+        path = os.path.expanduser(get_filer_window_path(window))
         return path.startswith(root.get_path())
