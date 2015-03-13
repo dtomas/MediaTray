@@ -104,7 +104,7 @@ class MediaIcon(WinIcon):
                     "unmounted", self.__unmounted
                 )
                 self.update_emblem()
-        self.__volume.mount(None, mounted)
+        self.__volume.mount(gtk.MountOperation(), mounted)
 
     def __unmount(self, menu_item=None):
         mount = self.__volume.get_mount()
