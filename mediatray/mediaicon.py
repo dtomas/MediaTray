@@ -31,10 +31,9 @@ class MediaIcon(WinIcon):
         self.connect("drag-data-get", self.__drag_data_get)
         self.__volume.connect("removed", self.__removed)
 
-        if self.__volume.get_mount() is not None:
-            self.__unmount_handler = self.__volume.get_mount().connect(
-                "unmounted", self.__unmounted
-            )
+        self.__unmount_handler = self.__volume.get_mount().connect(
+            "unmounted", self.__unmounted
+        ) if self.__volume.get_mount() is not None else None
 
         self.update_visibility()
         self.update_icon()
