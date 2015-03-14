@@ -165,8 +165,15 @@ class MediaIcon(WinIcon):
         if mount is None:
             return False
         root = mount.get_root()
+        if root is None:
+            return False
+        root_path = root.get_path()
         path = os.path.expanduser(get_filer_window_path(window))
-        return path.startswith(root.get_path())
+        return (
+            path == root.get_path() or
+                os.path.isdir(path) and
+                os.stat(root_path).st_dev == os.stat(path).st_dev
+        )
 
     def menu_has_kill(self):
         return False

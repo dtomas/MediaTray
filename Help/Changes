@@ -4,6 +4,7 @@
 
 0.0.2
 ~~~~~
+Improved should_have_window().
 Added fallback item.
 Copy/Move dropped files.
 Hide "Force Quit" item in window menu.
