@@ -4,6 +4,7 @@
 
 0.0.2
 ~~~~~
+Support for dragging the mountpoint URI.
 Improved should_have_window().
 Added fallback item.
 Copy/Move dropped files.

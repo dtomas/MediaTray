@@ -25,11 +25,12 @@ class MediaIcon(WinIcon):
 
         self.__volume = volume
 
-        self.drag_source_set(gtk.gdk.BUTTON1_MASK, 
-                            [("application/x-wnck-window-id", 
-                                0,
-                                TARGET_WNCK_WINDOW_ID)], 
-                            gtk.gdk.ACTION_MOVE)
+        self.drag_source_set(
+            gtk.gdk.BUTTON1_MASK, [
+                ("application/x-wnck-window-id", 0, TARGET_WNCK_WINDOW_ID),
+                ("text/uri-list", 0, TARGET_URI_LIST)
+            ], gtk.gdk.ACTION_MOVE | gtk.gdk.ACTION_COPY | gtk.gdk.ACTION_LINK
+        )
         self.connect("drag-data-get", self.__drag_data_get)
         self.__volume.connect("removed", self.__removed)
 
@@ -51,8 +52,17 @@ class MediaIcon(WinIcon):
     def __drag_data_get(self, widget, context, data, info, time):
         if not self.visible_windows:
             return
-        xid = self.visible_windows[0].get_xid()
-        data.set(data.target, 8, apply(struct.pack, ['1i', xid]))
+        if info == TARGET_WNCK_WINDOW_ID:
+            xid = self.visible_windows[0].get_xid()
+            data.set(data.target, 8, apply(struct.pack, ['1i', xid]))
+        else:
+            mount = self.__volume.get_mount()
+            if mount is None:
+                return
+            root = mount.get_root()
+            if root is None:
+                return
+            data.set_uris([root.get_uri()])
 
     def get_menu_right(self):
         menu = WinIcon.get_menu_right(self)
