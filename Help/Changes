@@ -4,6 +4,8 @@
 
 0.0.2
 ~~~~~
+Added fallback item.
+Copy/Move dropped files.
 Hide "Force Quit" item in window menu.
 Use gtk.MountOperation for user feedback.
 Do not show emblem for volumes that cannot be mounted.
