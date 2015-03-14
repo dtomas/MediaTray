@@ -139,7 +139,12 @@ class MediaIcon(WinIcon):
         return True
 
     def get_icon_names(self):
-        return self.__volume.get_icon().get_names()
+        # Fallback icon, shipped with MediaTray.
+        icons = ["drive-harddisk"]
+        icon = self.__volume.get_icon()
+        if icon is not None and hasattr(icon, 'get_names'):
+            icons = icon.get_names() + icons
+        return icons
 
     def make_name(self):
         return self.__volume.get_name()
