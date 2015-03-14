@@ -1,4 +1,6 @@
 import os, gtk, struct, gio
+from xml.sax.saxutils import escape
+
 from rox import filer
 
 from traylib import *
@@ -40,6 +42,7 @@ class MediaIcon(WinIcon):
         self.update_name()
         self.update_emblem()
         self.update_tooltip()
+        self.update_is_drop_target()
 
     def __removed(self, volume):
         for window in self.windows:
@@ -161,4 +164,63 @@ class MediaIcon(WinIcon):
         return path.startswith(root.get_path())
 
     def menu_has_kill(self):
+        return False
+
+    def make_is_drop_target(self):
+        return True
+
+    def uris_dropped(self, uri_list, action):
+        """
+        Called when URIs are dropped on the volume item.
+
+        If the volume is mounted, the files are copied (or moved) to the
+        volume. If not, it is mounted and the files will be copied as soon as
+        it's mounted.  (see property_changed())"""
+        if self.__volume.get_mount() is not None:
+            if action == gtk.gdk.ACTION_COPY:
+                self.__copy(uri_list)
+            elif action == gtk.gdk.ACTION_MOVE:
+                self.__copy(uri_list, True)
+        else:
+            if action == gtk.gdk.ACTION_COPY:
+                self.mount(on_mount=partial(
+                    self.__copy, uri_list=uri_list, move=False
+                ))
+            elif action == gtk.gdk.ACTION_MOVE:
+                self.mount(on_mount=partial(
+                    self.__copy, uri_list=uri_list, move=True
+                ))
+
+    def __copy(self, uri_list, move=False):
+        """Copy or move uris to the volume (via ROX-Filer).""" 
+        assert self.__volume.get_mount() is not None
+        assert self.__volume.get_mount().get_root() is not None
+        if move:
+            action = 'Move'
+        else:
+            action = 'Copy'
+        f = os.popen('rox --RPC', 'w')
+        xml = (
+            '<?xml version="1.0"?>'
+            '<env:Envelope xmlns:env="http://www.w3.org/2001/12/soap-envelope">'
+            '<env:Body xmlns="http://rox.sourceforge.net/SOAP/ROX-Filer">'
+            '<%s><From>' % action
+        )
+        for uri in uri_list:
+            if not uri.startswith('file'):
+                    continue
+            path = rox.get_local_path(uri)
+            xml += '<File>%s</File>' % escape(path)
+        xml += (
+            '</From><To>%s</To></%s></env:Body></env:Envelope>' % (
+                escape(self.__volume.get_mount().get_root().get_path()), action
+            )
+        )
+        f.write(xml)
+        f.close()
+
+    def spring_open(self, time = 0L):
+        if WinIcon.spring_open(self, time):
+            return True
+        self.__open()
         return False
