@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2015-03-12 22:14+CET\n"
+"POT-Creation-Date: 2015-03-15 09:00+CET\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,15 +23,15 @@ msgstr ""
 msgid "Scroll up to show windows of all workspaces."
 msgstr ""
 
-#: mediatray/mediaicon.py:43
+#: mediatray/mediaicon.py:389
 msgid "Eject"
 msgstr ""
 
-#: mediatray/mediaicon.py:50
+#: mediatray/mediaicon.py:400
 msgid "Unmount"
 msgstr ""
 
-#: mediatray/mediaicon.py:55
+#: mediatray/mediaicon.py:405
 msgid "Mount"
 msgstr ""
 
@@ -44,18 +44,18 @@ msgid "Show all workspaces"
 msgstr ""
 
 #: tipsH:3 tipsV:3
-msgid "Show arrow for applications with more than one open window"
+msgid "Show arrow for volumes with more than one open window"
 msgstr ""
 
 #: tipsH:4 tipsV:4
 msgid "Separators"
 msgstr ""
 
-#: tipsH:5 tipsH:8
+#: tipsH:5 tipsH:8 tipsH:16 tipsV:16
 msgid "Left"
 msgstr ""
 
-#: tipsH:6 tipsH:9
+#: tipsH:6 tipsH:9 tipsH:17 tipsV:17
 msgid "Right"
 msgstr ""
 
@@ -76,18 +76,22 @@ msgid "Appearance"
 msgstr ""
 
 #: tipsH:13 tipsV:13
-msgid "Use themed icons if possible"
-msgstr ""
-
-#: tipsH:14 tipsV:14
 msgid "Enable visual effects"
 msgstr ""
 
-#: tipsV:5 tipsV:8
+#: tipsH:14 tipsV:14
+msgid "Pinboard Icons"
+msgstr ""
+
+#: tipsH:15 tipsV:15
+msgid "Show icons on the pinboard"
+msgstr ""
+
+#: tipsH:18 tipsV:5 tipsV:8 tipsV:18
 msgid "Top"
 msgstr ""
 
-#: tipsV:6 tipsV:9
+#: tipsH:19 tipsV:6 tipsV:9 tipsV:19
 msgid "Bottom"
 msgstr ""
 
