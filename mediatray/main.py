@@ -24,11 +24,15 @@ class MediaTrayMain(Main):
  
     def init_config(self):
         Main.init_config(self)
-        self.__win_config = WinIconConfig(self.__o_all_workspaces.int_value, 
-                                          self.__o_arrow.int_value)
-        self.__mediaicon_config = MediaIconConfig(self.__o_pin.int_value,
-                                                  self.__o_pin_x.int_value,
-                                                  self.__o_pin_y.int_value)
+        self.__win_config = WinIconConfig(
+            all_workspaces=self.__o_all_workspaces.int_value,
+            arrow=self.__o_arrow.int_value,
+        )
+        self.__mediaicon_config = MediaIconConfig(
+            pin=self.__o_pin.int_value,
+            pin_x=self.__o_pin_x.int_value,
+            pin_y=self.__o_pin_y.int_value,
+        )
 
         # MediaTray doesn't use the 'hidden' option, so make sure no icons get
         # hidden.

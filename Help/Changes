@@ -2,6 +2,10 @@
 			Shows removable media
 			by Dennis Tomas
 
+0.0.3 (unreleased)
+~~~~~
+Now using TrayLib 0.4.2, see TrayLib/Help/Changes.
+
 0.0.2
 ~~~~~
 Show icons on pinboard.
