@@ -7,10 +7,12 @@ from mediatray.mediaicon import MediaIcon
 
 class MediaIconManager(WinIconManager):
 
-    def __init__(self, tray, screen, icon_config, win_config):
+    def __init__(self, tray, screen, icon_config, win_config,
+                 mediaicon_config):
         WinIconManager.__init__(self, tray, screen)
         self.__icon_config = icon_config
         self.__win_config = win_config
+        self.__mediaicon_config = mediaicon_config
 
     def init(self):
         self.__volume_monitor = gio.volume_monitor_get()
@@ -26,7 +28,8 @@ class MediaIconManager(WinIconManager):
         self.__volume_monitor.connect("volume-removed", self.__volume_removed)
 
     def __volume_added(self, volume_monitor, volume):
-        icon = MediaIcon(self.icon_config, self.__win_config, volume)
+        icon = MediaIcon(self.icon_config, self.__win_config,
+                         self.__mediaicon_config, volume)
         self.tray.add_icon(None, volume, icon)
         self.icon_added(icon)
 

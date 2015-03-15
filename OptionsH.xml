@@ -23,5 +23,24 @@
     <frame label='Appearance'>
       <toggle name='effects' label='Enable visual effects'/>
     </frame>
+    <frame label='Pinboard Icons'>
+      <vbox>
+        <toggle label='Show icons on the pinboard' name='pin'/>
+        <hbox>
+          <hbox>
+            <radio-group name='pin_x'>
+              <radio label='Left' value='-1'></radio>
+              <radio label='Right' value='-2'></radio>
+            </radio-group>
+          </hbox>
+          <vbox>
+            <radio-group name='pin_y'>
+              <radio label='Top' value='-1'></radio>
+              <radio label='Bottom' value='-2'></radio>
+            </radio-group>
+          </vbox>
+        </hbox>
+      </vbox>
+    </frame>
   </section>
 </options>

@@ -1,12 +1,18 @@
-import os, gtk, struct, gio
+import os
+import struct
+import json
 from xml.sax.saxutils import escape
 from ConfigParser import RawConfigParser, NoOptionError
 
+import gtk
+import gio
 from rox import filer
 
 from traylib import *
 from traylib.winicon import WinIcon
 from traylib.winmenu import get_filer_window_path
+
+from mediatray.config import config_dir
 
 
 icons_dir = os.path.join(rox.app_dir, 'icons')
@@ -17,6 +23,55 @@ emblem_rox_mounted = gtk.gdk.pixbuf_new_from_file(
 emblem_rox_mount = gtk.gdk.pixbuf_new_from_file(
     os.path.join(icons_dir, 'rox-mount.png')
 )
+
+
+SECTION_WINDOWS_AUTORUN = 'autorun'
+
+
+_volumes_on_pinboard_path = os.path.join(config_dir, 'volumes_on_pinboard')
+
+volumes_on_pinboard = []
+
+
+# remove non-existent volumes from pinboard
+try:
+    f = open(_volumes_on_pinboard_path, 'r')
+    try:
+        volumes_on_pinboard = json.load(f)
+    except ValueError:
+        # Unreadable file, remove it.
+        os.unlink(_volumes_on_pinboard_path)
+    finally:
+        f.close()
+except IOError:
+    pass
+
+
+for path in volumes_on_pinboard:
+    if not os.path.isdir(path):
+        f = os.popen('rox --RPC', 'w')
+        f.write(
+            '<?xml version="1.0"?>'
+            '<env:Envelope xmlns:env="http://www.w3.org/2001/12/soap-envelope">'
+                '<env:Body xmlns="http://rox.sourceforge.net/SOAP/ROX-Filer">'
+                    '<PinboardRemove>'
+                        '<Path>' + escape(path) + '</Path>'
+                    '</PinboardRemove>'
+                    '<UnsetIcon>'
+                        '<Path>' + escape(path) + '</Path>'
+                        '</UnsetIcon>'
+                '</env:Body>'
+                '</env:Envelope>'
+        )
+        f.close()
+		
+if volumes_on_pinboard:
+    volumes_on_pinboard = []
+    f = open(_volumes_on_pinboard_path, 'w')
+    try:
+        json.dump(volumes_on_pinboard, f)
+    finally:
+        f.close()
 
 
 class WindowsAutoRun(object):
@@ -68,10 +123,14 @@ def get_case_sensitive_path(path, root = '/'):
 
 class MediaIcon(WinIcon):
 
-    def __init__(self, icon_config, win_config, volume):
+    def __init__(self, icon_config, win_config, mediaicon_config, volume):
         WinIcon.__init__(self, icon_config, win_config)
 
+        self.__mediaicon_config = mediaicon_config
+        mediaicon_config.add_configurable(self)
+
         self.__volume = volume
+        self.__is_on_pinboard = False
 
         self.drag_source_set(
             gtk.gdk.BUTTON1_MASK, [
@@ -88,6 +147,8 @@ class MediaIcon(WinIcon):
             mount.connect("unmounted", self.__unmounted) if mount is not None
             else None
         )
+
+        self.add_to_pinboard()
         
         self.__set_icon(self.get_icon_path())
 
@@ -97,6 +158,102 @@ class MediaIcon(WinIcon):
         self.update_emblem()
         self.update_tooltip()
         self.update_is_drop_target()
+
+    def update_pin(self):
+        if self.__mediaicon_config.pin:
+            self.add_to_pinboard()
+        else:
+            self.remove_from_pinboard()
+
+    def update_pin_x(self):
+        self.remove_from_pinboard()
+        self.add_to_pinboard()
+
+    def update_pin_y(self):
+        self.remove_from_pinboard()
+        self.add_to_pinboard()
+
+    def _add_to_pinboard(self):
+        root_path = self.mountpoint
+        if root_path is None:
+            return
+        f = os.popen('rox --RPC', 'w')
+        rpc = (
+            '<?xml version="1.0"?>'
+            '<env:Envelope xmlns:env="http://www.w3.org/2001/12/soap-envelope">'
+                '<env:Body xmlns="http://rox.sourceforge.net/SOAP/ROX-Filer">'
+                    '<PinboardAdd>'
+                        '<Path>' + escape(root_path) + '</Path>'
+                        '<Label>' + escape(self.name) + '</Label>'
+                        '<X>' + str(self.mediaicon_config.pin_x) + '</X>'
+                        '<Y>' + str(self.mediaicon_config.pin_y) + '</Y>'
+                        '<Update>1</Update>'
+                    '</PinboardAdd>'
+                '</env:Body>'
+            '</env:Envelope>')
+        f.write(rpc)
+        f.close()
+        if root_path not in volumes_on_pinboard:
+            volumes_on_pinboard.append(root_path)
+            f = open(_volumes_on_pinboard_path, 'w')
+            try:
+                json.dump(volumes_on_pinboard, f)
+            finally:
+                f.close()
+        self.__is_on_pinboard = True
+
+    def add_to_pinboard(self):
+        """Adds the volume to the pinboard."""
+        if self.__is_on_pinboard:
+            return
+        if not self.mediaicon_config.pin:
+            return
+        # update icon path, so we don't see a directory icon for a short time
+        #self.get_icon_path(48)
+        self._add_to_pinboard()
+
+    def remove_from_pinboard(self, mount=None, unset_icon=False):
+        if mount is None:
+            mount = self.__volume.get_mount()
+        if mount is None:
+            return
+        if not self.__is_on_pinboard:
+            return
+        root = mount.get_root()
+        if root is None:
+            return
+        root_path = root.get_path()
+        if not root_path:
+            return
+        f = os.popen('rox --RPC', 'w')
+        tmp = (
+            '<?xml version="1.0"?>'
+            '<env:Envelope xmlns:env="http://www.w3.org/2001/12/soap-envelope">'
+                '<env:Body xmlns="http://rox.sourceforge.net/SOAP/ROX-Filer">'
+                    '<PinboardRemove>'
+                        '<Path>' + escape(root_path) + '</Path>'
+                    '</PinboardRemove>'
+        )
+        if unset_icon:
+            tmp += (
+                    '<UnsetIcon>'
+                        '<Path>' + escape(root_path) + '</Path>'
+                    '</UnsetIcon>'
+            )
+        tmp += (
+                '</env:Body>'
+            '</env:Envelope>'
+        )
+        f.write(tmp)
+        f.close()
+        if root_path in volumes_on_pinboard:
+            volumes_on_pinboard.remove(root_path)
+            f = open(_volumes_on_pinboard_path, 'w')
+            try:
+                json.dump(volumes_on_pinboard, f)
+            finally:
+                f.close()
+        self.__is_on_pinboard = False
 
     @property
     def mountpoint(self):
@@ -202,9 +359,10 @@ class MediaIcon(WinIcon):
     def get_fallback_icon_path():
         return os.path.join(rox.app_dir, 'icons', 'drive-harddisk.png')
 
-    def __removed(self, volume):
+    def __removed(self, volume, mount=None):
         for window in self.windows:
             window.close(0)
+        self.remove_from_pinboard(mount)
 
     def __drag_data_get(self, widget, context, data, info, time):
         if not self.visible_windows:
@@ -258,7 +416,7 @@ class MediaIcon(WinIcon):
         self.update_emblem()
         mount.disconnect(self.__unmount_handler)
         self.__unmount_handler = None
-        self.__removed(self.__volume)
+        self.__removed(self.__volume, mount)
 
     def __mount(self, menu_item=None, on_mount=None):
         def mounted(volume, result):
@@ -271,6 +429,8 @@ class MediaIcon(WinIcon):
                     "unmounted", self.__unmounted
                 )
                 self.update_emblem()
+                self.__set_icon(self.get_icon_path())
+                self.add_to_pinboard()
         self.__volume.mount(gtk.MountOperation(), mounted)
 
     def __unmount(self, menu_item=None):
@@ -397,3 +557,5 @@ class MediaIcon(WinIcon):
             return True
         self.__open()
         return False
+
+    mediaicon_config = property(lambda self : self.__mediaicon_config)

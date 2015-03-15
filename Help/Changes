@@ -4,6 +4,7 @@
 
 0.0.2
 ~~~~~
+Show icons on pinboard.
 Set mountpoint icon in ROX-Filer.
 Allow for menu items to be dragged as text/uri-list.
 Support for dragging the mountpoint URI.

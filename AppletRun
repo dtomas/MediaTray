@@ -1,8 +1,5 @@
 #! /usr/bin/env python
 
-PROJECT = "MediaTray"
-SITE = "rox4debian.berlios.de"
-
 import sys, os
 sys.path.append(os.path.dirname(__file__))
 sys.path.append(os.path.join(os.path.dirname(__file__), 'TrayLib'))
@@ -11,7 +8,7 @@ sys.path.append(
 )
 
 import rox
-from mediatray.main import MediaTrayMain
+from mediatray.main import MediaTrayMain, SITE, PROJECT
 
 __builtins__._ = rox.i18n.translation(os.path.join(rox.app_dir, 'Messages'))
 
