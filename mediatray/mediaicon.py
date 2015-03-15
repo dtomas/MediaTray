@@ -320,16 +320,19 @@ class MediaIcon(WinIcon):
 
         windows_autorun = WindowsAutoRun()
 
-        if not parser.has_section(SECTION_WINDOWS_AUTORUN):
-            raise DesktopEntryNotShown()
+        for section in parser.sections():
+            if section.lower() == SECTION_WINDOWS_AUTORUN:
+                break
+        else:
+            return None
 
         try:
-            icon = parser.get(SECTION_WINDOWS_AUTORUN, "icon")
+            icon = parser.get(section, "icon")
         except NoOptionError:
             pass # no icon
            
         try:
-            exe = parser.get(SECTION_WINDOWS_AUTORUN, "open")
+            exe = parser.get(section, "open")
         except NoOptionError:
             exe = None # no exe
         
@@ -428,6 +431,7 @@ class MediaIcon(WinIcon):
                 self.__unmount_handler = volume.get_mount().connect(
                     "unmounted", self.__unmounted
                 )
+                self.update_icon()
                 self.update_emblem()
                 self.__set_icon(self.get_icon_path())
                 self.add_to_pinboard()
