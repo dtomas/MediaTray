@@ -1,5 +1,6 @@
 import os, gtk, struct, gio
 from xml.sax.saxutils import escape
+from ConfigParser import RawConfigParser, NoOptionError
 
 from rox import filer
 
@@ -18,6 +19,53 @@ emblem_rox_mount = gtk.gdk.pixbuf_new_from_file(
 )
 
 
+class WindowsAutoRun(object):
+    
+    def __init__(self):
+        self.__exe = ''
+        self.__icon = ''
+
+    @property
+    def icon(self):
+        return self.__icon
+
+    @property
+    def exe(self):
+        return self.__exe
+
+    @exe.setter
+    def exe(self, exe):
+        self.__exe = (
+            None if exe is None
+            else exe.strip(' \\').replace('\\', os.path.sep)
+        )
+            
+    @property
+    def icon(self):
+        return self.__icon
+
+    @icon.setter
+    def icon(self, icon):
+        self.__icon = (
+            None if icon is None
+            else icon.strip(' \\').replace('\\', os.path.sep)
+        )
+
+
+def get_case_sensitive_path(path, root = '/'):
+    """Search for a case sensitive path equivalent to the given path.
+    root is the portion of the path that exists."""
+    if path == root:
+        return root
+    dirname, basename = os.path.split(path)
+    basename = basename.lower()
+    for filename in os.listdir(dirname):
+        if filename.lower() == basename:
+            return os.path.join(get_case_sensitive_path(dirname), filename)
+    return ''
+
+
+
 class MediaIcon(WinIcon):
 
     def __init__(self, icon_config, win_config, volume):
@@ -34,9 +82,14 @@ class MediaIcon(WinIcon):
         self.connect("drag-data-get", self.__drag_data_get)
         self.__volume.connect("removed", self.__removed)
 
-        self.__unmount_handler = self.__volume.get_mount().connect(
-            "unmounted", self.__unmounted
-        ) if self.__volume.get_mount() is not None else None
+        mount = self.__volume.get_mount()
+
+        self.__unmount_handler = (
+            mount.connect("unmounted", self.__unmounted) if mount is not None
+            else None
+        )
+        
+        self.__set_icon(self.get_icon_path())
 
         self.update_visibility()
         self.update_icon()
@@ -44,6 +97,110 @@ class MediaIcon(WinIcon):
         self.update_emblem()
         self.update_tooltip()
         self.update_is_drop_target()
+
+    @property
+    def mountpoint(self):
+        mount = self.__volume.get_mount()
+        if mount is None:
+            return None
+        root = mount.get_root()
+        if root is None:
+            # Should never happen, but anyway...
+            return
+        return root.get_path()
+
+    def __set_icon(self, icon_path):
+        if icon_path is None:
+            return
+        root_path = self.mountpoint
+        if root_path is None:
+            return
+        f = os.popen('rox --RPC', 'w')
+        f.write(
+            '<?xml version="1.0"?>'
+            '<env:Envelope xmlns:env="http://www.w3.org/2001/12/soap-envelope">'
+                '<env:Body xmlns="http://rox.sourceforge.net/SOAP/ROX-Filer">'
+                    '<SetIcon>'
+                        '<Path>' + escape(root_path) + '</Path>'
+                        '<Icon>' + escape(icon_path) + '</Icon>'
+                    '</SetIcon>'
+                '</env:Body>'
+            '</env:Envelope>'
+        )
+        f.close()
+
+    def get_individual_icon_path(self):
+        root_path = self.mountpoint
+        if root_path is None:
+            return None
+
+        # Try to read diricon.
+        icon_path = os.path.join(root_path, '.DirIcon')
+        if os.access(icon_path, os.R_OK):
+            return icon_path
+
+        # Try to read icon from windows autorun.
+        windows_autorun = self.__read_windows_autorun()
+        if windows_autorun is not None and windows_autorun.icon is not None:
+            icon_path = get_case_sensitive_path(
+                os.path.join(root_path, windows_autorun.icon), root_path
+            )
+            if os.access(icon_path, os.R_OK):
+                return icon_path
+
+        return None
+
+    def __read_windows_autorun(self):
+        root_path = self.mountpoint
+        if root_path is None:
+            return None
+
+        path = os.path.join(root_path, 'autorun.inf')
+        parser = RawConfigParser()
+
+        if parser.read(path) != [path]:
+            return
+
+        windows_autorun = WindowsAutoRun()
+
+        if not parser.has_section(SECTION_WINDOWS_AUTORUN):
+            raise DesktopEntryNotShown()
+
+        try:
+            icon = parser.get(SECTION_WINDOWS_AUTORUN, "icon")
+        except NoOptionError:
+            pass # no icon
+           
+        try:
+            exe = parser.get(SECTION_WINDOWS_AUTORUN, "open")
+        except NoOptionError:
+            exe = None # no exe
+        
+        windows_autorun = WindowsAutoRun()
+        if icon and '..' not in icon:
+            windows_autorun.icon = icon
+        if '..' not in exe:
+            windows_autorun.exe = exe
+        return windows_autorun
+
+    def get_icon_path(self):
+        icon_path = self.get_individual_icon_path()
+        if icon_path is not None:
+            return icon_path
+
+        icon_names = self.icon_names
+        for icon_name in icon_names:
+            icon_info = ICON_THEME.lookup_icon(icon_name, 48, 0)
+            if icon_info is not None:
+                icon_path = icon_info.get_filename()
+                #icon_info.free()
+                break
+        else:
+            icon_path = self.get_fallback_icon_path()
+        return icon_path
+
+    def get_fallback_icon_path():
+        return os.path.join(rox.app_dir, 'icons', 'drive-harddisk.png')
 
     def __removed(self, volume):
         for window in self.windows:
@@ -56,11 +213,8 @@ class MediaIcon(WinIcon):
             xid = self.visible_windows[0].get_xid()
             data.set(data.target, 8, apply(struct.pack, ['1i', xid]))
         else:
-            mount = self.__volume.get_mount()
-            if mount is None:
-                return
-            root = mount.get_root()
-            if root is None:
+            root_path = self.mountpoint
+            if root_path is None:
                 return
             data.set_uris([root.get_uri()])
 
@@ -132,7 +286,7 @@ class MediaIcon(WinIcon):
         def open(mount):
             filer.open_dir(mount.get_root().get_path())
 
-        if not mount:
+        if mount is None:
             self.__mount(on_mount=open)
         else:
             open(mount)
@@ -171,16 +325,12 @@ class MediaIcon(WinIcon):
         return False
 
     def should_have_window(self, window):
-        mount = self.__volume.get_mount()
-        if mount is None:
+        root_path = self.mountpoint
+        if root_path is None:
             return False
-        root = mount.get_root()
-        if root is None:
-            return False
-        root_path = root.get_path()
         path = os.path.expanduser(get_filer_window_path(window))
         return (
-            path == root.get_path() or
+            path == root_path or
                 os.path.isdir(path) and
                 os.stat(root_path).st_dev == os.stat(path).st_dev
         )
@@ -215,8 +365,9 @@ class MediaIcon(WinIcon):
 
     def __copy(self, uri_list, move=False):
         """Copy or move uris to the volume (via ROX-Filer).""" 
-        assert self.__volume.get_mount() is not None
-        assert self.__volume.get_mount().get_root() is not None
+        root_path = self.mountpoint
+        if root_path is None:
+            return
         if move:
             action = 'Move'
         else:
@@ -230,7 +381,7 @@ class MediaIcon(WinIcon):
         )
         for uri in uri_list:
             if not uri.startswith('file'):
-                    continue
+                continue
             path = rox.get_local_path(uri)
             xml += '<File>%s</File>' % escape(path)
         xml += (
