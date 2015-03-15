@@ -159,21 +159,148 @@ class MediaIcon(WinIcon):
         self.update_tooltip()
         self.update_is_drop_target()
 
+    @property
+    def mountpoint(self):
+        mount = self.__volume.get_mount()
+        if mount is None:
+            return None
+        root = mount.get_root()
+        if root is None:
+            # Should never happen, but anyway...
+            return None
+        return root.get_path()
+
+
+    # Actions
+
+    def mount(self, on_mount=None):
+        def mounted(volume, result):
+            if not self.__volume.mount_finish(result):
+                return
+            if on_mount is not None:
+                on_mount(self.__volume.get_mount())
+            if self.__unmount_handler is not None:
+                volume.get_mount().disconnect(self.__unmount_handler)
+            self.__unmount_handler = volume.get_mount().connect(
+                "unmounted", self.__unmounted
+            )
+            self.update_icon()
+            self.update_emblem()
+            self.__set_icon(self.get_icon_path())
+            self.add_to_pinboard()
+        self.__volume.mount(gtk.MountOperation(), mounted)
+
+    def unmount(self):
+        mount = self.__volume.get_mount()
+
+        def unmounted(mount, result):
+            mount.unmount_finish(result)
+        mount.unmount(unmounted)
+
+    def open(self):
+        mount = self.__volume.get_mount()
+
+        def open(mount):
+            filer.open_dir(mount.get_root().get_path())
+
+        if mount is None:
+            self.mount(on_mount=open)
+        else:
+            open(mount)
+
+    def eject(self):
+        def ejected(volume, result):
+            self.__volume.eject_finish(result)
+        self.__volume.eject(ejected)
+
+    def copy(self, uri_list, move=False):
+        """Copy or move uris to the volume (via ROX-Filer).""" 
+        root_path = self.mountpoint
+        if root_path is None:
+            return
+        if move:
+            action = 'Move'
+        else:
+            action = 'Copy'
+        f = os.popen('rox --RPC', 'w')
+        xml = (
+            '<?xml version="1.0"?>'
+            '<env:Envelope xmlns:env="http://www.w3.org/2001/12/soap-envelope">'
+            '<env:Body xmlns="http://rox.sourceforge.net/SOAP/ROX-Filer">'
+            '<%s><From>' % action
+        )
+        for uri in uri_list:
+            if not uri.startswith('file'):
+                continue
+            path = rox.get_local_path(uri)
+            xml += '<File>%s</File>' % escape(path)
+        xml += (
+            '</From><To>%s</To></%s></env:Body></env:Envelope>' % (
+                escape(self.__volume.get_mount().get_root().get_path()), action
+            )
+        )
+        f.write(xml)
+        f.close()
+
+
+    # Methods called when MediaIconConfig has changed.
+
     def update_pin(self):
+        """Called when the pin option has changed."""
         if self.__mediaicon_config.pin:
             self.add_to_pinboard()
         else:
             self.remove_from_pinboard()
 
     def update_pin_x(self):
+        """Called when the pin_x option has changed."""
         self.remove_from_pinboard()
         self.add_to_pinboard()
 
     def update_pin_y(self):
+        """Called when the pin_y option has changed."""
         self.remove_from_pinboard()
         self.add_to_pinboard()
 
-    def _add_to_pinboard(self):
+
+    # Signal handlers
+
+    def __removed(self, volume, mount=None):
+        for window in self.windows:
+            window.close(0)
+        self.remove_from_pinboard(mount)
+
+    def __drag_data_get(self, widget, context, data, info, time):
+        if not self.visible_windows:
+            return
+        if info == TARGET_WNCK_WINDOW_ID:
+            xid = self.visible_windows[0].get_xid()
+            data.set(data.target, 8, apply(struct.pack, ['1i', xid]))
+        else:
+            root_path = self.mountpoint
+            if root_path is None:
+                return
+            data.set_uris([root.get_uri()])
+
+    def __unmounted(self, mount):
+        self.update_emblem()
+        mount.disconnect(self.__unmount_handler)
+        self.__unmount_handler = None
+        self.__removed(self.__volume, mount)
+
+
+    # Pinboard
+
+    def add_to_pinboard(self):
+        """
+        Add the volume to the pinboard.
+
+        Only works if the volume is mounted and the pin option is set.
+        """
+        if self.__is_on_pinboard:
+            return
+        if not self.mediaicon_config.pin:
+            return
         root_path = self.mountpoint
         if root_path is None:
             return
@@ -202,17 +329,8 @@ class MediaIcon(WinIcon):
                 f.close()
         self.__is_on_pinboard = True
 
-    def add_to_pinboard(self):
-        """Adds the volume to the pinboard."""
-        if self.__is_on_pinboard:
-            return
-        if not self.mediaicon_config.pin:
-            return
-        # update icon path, so we don't see a directory icon for a short time
-        #self.get_icon_path(48)
-        self._add_to_pinboard()
-
     def remove_from_pinboard(self, mount=None, unset_icon=False):
+        """Remove the volume from the pinboard."""
         if mount is None:
             mount = self.__volume.get_mount()
         if mount is None:
@@ -255,16 +373,8 @@ class MediaIcon(WinIcon):
                 f.close()
         self.__is_on_pinboard = False
 
-    @property
-    def mountpoint(self):
-        mount = self.__volume.get_mount()
-        if mount is None:
-            return None
-        root = mount.get_root()
-        if root is None:
-            # Should never happen, but anyway...
-            return
-        return root.get_path()
+
+    # Icon handling
 
     def __set_icon(self, icon_path):
         if icon_path is None:
@@ -307,6 +417,12 @@ class MediaIcon(WinIcon):
 
         return None
 
+    def get_fallback_icon_path():
+        return os.path.join(rox.app_dir, 'icons', 'drive-harddisk.png')
+
+    
+    # Windows autorun support
+
     def __read_windows_autorun(self):
         root_path = self.mountpoint
         if root_path is None:
@@ -343,6 +459,29 @@ class MediaIcon(WinIcon):
             windows_autorun.exe = exe
         return windows_autorun
 
+
+    # Methods overridden from WinIcon.
+
+    def should_hide_if_no_visible_windows(self):
+        return False
+
+    def should_have_window(self, window):
+        root_path = self.mountpoint
+        if root_path is None:
+            return False
+        path = os.path.expanduser(get_filer_window_path(window))
+        return (
+            path == root_path or
+                os.path.isdir(path) and
+                os.stat(root_path).st_dev == os.stat(path).st_dev
+        )
+
+    def menu_has_kill(self):
+        return False
+
+
+    # Methods overridden from Icon.
+
     def get_icon_path(self):
         icon_path = self.get_individual_icon_path()
         if icon_path is not None:
@@ -359,26 +498,6 @@ class MediaIcon(WinIcon):
             icon_path = self.get_fallback_icon_path()
         return icon_path
 
-    def get_fallback_icon_path():
-        return os.path.join(rox.app_dir, 'icons', 'drive-harddisk.png')
-
-    def __removed(self, volume, mount=None):
-        for window in self.windows:
-            window.close(0)
-        self.remove_from_pinboard(mount)
-
-    def __drag_data_get(self, widget, context, data, info, time):
-        if not self.visible_windows:
-            return
-        if info == TARGET_WNCK_WINDOW_ID:
-            xid = self.visible_windows[0].get_xid()
-            data.set(data.target, 8, apply(struct.pack, ['1i', xid]))
-        else:
-            root_path = self.mountpoint
-            if root_path is None:
-                return
-            data.set_uris([root.get_uri()])
-
     def get_menu_right(self):
         menu = WinIcon.get_menu_right(self)
         if not menu:
@@ -394,76 +513,31 @@ class MediaIcon(WinIcon):
                 ICON_THEME.load_icon("media-eject", gtk.ICON_SIZE_MENU, 0)
             )
             eject_item.set_image(eject_image)
-            eject_item.connect("activate", self.__eject) 
+            eject_item.connect("activate", lambda item: self.eject()) 
             menu.prepend(eject_item)
 
         if self.__volume.can_mount():
             if self.__volume.get_mount():
                 unmount_item = gtk.ImageMenuItem(gtk.STOCK_CANCEL)
                 unmount_item.set_label(_("Unmount"))
-                unmount_item.connect("activate", self.__unmount) 
+                unmount_item.connect("activate", lambda item: self.unmount()) 
                 menu.prepend(unmount_item)
             else:
                 mount_item = gtk.ImageMenuItem(gtk.STOCK_YES)
                 mount_item.set_label(_("Mount"))
-                mount_item.connect("activate", self.__mount)
+                mount_item.connect("activate", lambda item: self.mount())
                 menu.prepend(mount_item)
 
             menu.prepend(gtk.SeparatorMenuItem())
             open_item = gtk.ImageMenuItem(gtk.STOCK_OPEN)
-            open_item.connect("activate", self.__open)
+            open_item.connect("activate", lambda item: self.open())
             menu.prepend(open_item)
         return menu
-
-    def __unmounted(self, mount):
-        self.update_emblem()
-        mount.disconnect(self.__unmount_handler)
-        self.__unmount_handler = None
-        self.__removed(self.__volume, mount)
-
-    def __mount(self, menu_item=None, on_mount=None):
-        def mounted(volume, result):
-            if self.__volume.mount_finish(result):
-                if on_mount is not None:
-                    on_mount(self.__volume.get_mount())
-                if self.__unmount_handler is not None:
-                    volume.get_mount().disconnect(self.__unmount_handler)
-                self.__unmount_handler = volume.get_mount().connect(
-                    "unmounted", self.__unmounted
-                )
-                self.update_icon()
-                self.update_emblem()
-                self.__set_icon(self.get_icon_path())
-                self.add_to_pinboard()
-        self.__volume.mount(gtk.MountOperation(), mounted)
-
-    def __unmount(self, menu_item=None):
-        mount = self.__volume.get_mount()
-
-        def unmounted(mount, result):
-            mount.unmount_finish(result)
-        mount.unmount(unmounted)
-
-    def __open(self, menu_item=None):
-        mount = self.__volume.get_mount()
-
-        def open(mount):
-            filer.open_dir(mount.get_root().get_path())
-
-        if mount is None:
-            self.__mount(on_mount=open)
-        else:
-            open(mount)
-
-    def __eject(self, menu_item):
-        def ejected(volume, result):
-            self.__volume.eject_finish(result)
-        self.__volume.eject(ejected)
 
     def click(self, time=0L):
         if WinIcon.click(self):
             return True
-        self.__open()
+        self.open()
         return True
 
     def get_icon_names(self):
@@ -485,23 +559,6 @@ class MediaIcon(WinIcon):
             else emblem_rox_mounted
         )
 
-    def should_hide_if_no_visible_windows(self):
-        return False
-
-    def should_have_window(self, window):
-        root_path = self.mountpoint
-        if root_path is None:
-            return False
-        path = os.path.expanduser(get_filer_window_path(window))
-        return (
-            path == root_path or
-                os.path.isdir(path) and
-                os.stat(root_path).st_dev == os.stat(path).st_dev
-        )
-
-    def menu_has_kill(self):
-        return False
-
     def make_is_drop_target(self):
         return True
 
@@ -514,52 +571,23 @@ class MediaIcon(WinIcon):
         it's mounted.  (see property_changed())"""
         if self.__volume.get_mount() is not None:
             if action == gtk.gdk.ACTION_COPY:
-                self.__copy(uri_list)
+                self.copy(uri_list)
             elif action == gtk.gdk.ACTION_MOVE:
-                self.__copy(uri_list, True)
+                self.copy(uri_list, True)
         else:
             if action == gtk.gdk.ACTION_COPY:
                 self.mount(on_mount=partial(
-                    self.__copy, uri_list=uri_list, move=False
+                    self.copy, uri_list=uri_list, move=False
                 ))
             elif action == gtk.gdk.ACTION_MOVE:
                 self.mount(on_mount=partial(
-                    self.__copy, uri_list=uri_list, move=True
+                    self.copy, uri_list=uri_list, move=True
                 ))
-
-    def __copy(self, uri_list, move=False):
-        """Copy or move uris to the volume (via ROX-Filer).""" 
-        root_path = self.mountpoint
-        if root_path is None:
-            return
-        if move:
-            action = 'Move'
-        else:
-            action = 'Copy'
-        f = os.popen('rox --RPC', 'w')
-        xml = (
-            '<?xml version="1.0"?>'
-            '<env:Envelope xmlns:env="http://www.w3.org/2001/12/soap-envelope">'
-            '<env:Body xmlns="http://rox.sourceforge.net/SOAP/ROX-Filer">'
-            '<%s><From>' % action
-        )
-        for uri in uri_list:
-            if not uri.startswith('file'):
-                continue
-            path = rox.get_local_path(uri)
-            xml += '<File>%s</File>' % escape(path)
-        xml += (
-            '</From><To>%s</To></%s></env:Body></env:Envelope>' % (
-                escape(self.__volume.get_mount().get_root().get_path()), action
-            )
-        )
-        f.write(xml)
-        f.close()
 
     def spring_open(self, time = 0L):
         if WinIcon.spring_open(self, time):
             return True
-        self.__open()
+        self.open()
         return False
 
     mediaicon_config = property(lambda self : self.__mediaicon_config)
