@@ -245,19 +245,19 @@ class MediaIcon(WinIcon):
 
     # Methods called when MediaIconConfig has changed.
 
-    def update_pin(self):
+    def update_option_pin(self):
         """Called when the pin option has changed."""
         if self.__mediaicon_config.pin:
             self.add_to_pinboard()
         else:
             self.remove_from_pinboard()
 
-    def update_pin_x(self):
+    def update_option_pin_x(self):
         """Called when the pin_x option has changed."""
         self.remove_from_pinboard()
         self.add_to_pinboard()
 
-    def update_pin_y(self):
+    def update_option_pin_y(self):
         """Called when the pin_y option has changed."""
         self.remove_from_pinboard()
         self.add_to_pinboard()
