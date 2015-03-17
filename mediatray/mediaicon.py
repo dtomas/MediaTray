@@ -162,6 +162,7 @@ class MediaIcon(WinIcon):
 
     @property
     def mountpoint(self):
+        """The volume's mount point or C{None} if the volume is not mounted."""
         mount = self.__volume.get_mount()
         if mount is None:
             return None
@@ -175,6 +176,12 @@ class MediaIcon(WinIcon):
     # Actions
 
     def mount(self, on_mount=None):
+        """
+        Mount the volume.
+
+        @param on_mount: function which gets called with the volume's
+            C{gio.Mount} object when the volume has been mounted.
+        """
         if self.__volume.get_mount() is not None:
             # Already mounted.
             return
@@ -195,6 +202,7 @@ class MediaIcon(WinIcon):
         self.__volume.mount(gtk.MountOperation(), mounted)
 
     def unmount(self):
+        """Unmount the volume."""
         mount = self.__volume.get_mount()
         if mount is None:
             # Already unmounted.
@@ -205,6 +213,7 @@ class MediaIcon(WinIcon):
         mount.unmount(unmounted)
 
     def open(self):
+        """Open the volume's mount point in ROX-Filer."""
         mount = self.__volume.get_mount()
 
         def open(mount):
@@ -216,6 +225,7 @@ class MediaIcon(WinIcon):
             open(mount)
 
     def eject(self):
+        """Eject the volume."""
         def ejected(volume, result):
             self.__volume.eject_finish(result)
         self.__volume.eject(ejected)
