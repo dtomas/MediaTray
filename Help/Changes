@@ -4,6 +4,7 @@
 
 0.0.3 (unreleased)
 ~~~~~
+Optional automatic mounting or opening.
 Now using TrayLib 0.4.2, see TrayLib/Help/Changes.
 
 0.0.2

@@ -13,6 +13,7 @@ from traylib.winicon import WinIcon
 from traylib.winmenu import get_filer_window_path
 
 from mediatray.config import config_dir
+from mediatray.mediaicon_config import AUTOMOUNT, AUTOOPEN
 
 
 icons_dir = os.path.join(rox.app_dir, 'icons')
@@ -174,6 +175,9 @@ class MediaIcon(WinIcon):
     # Actions
 
     def mount(self, on_mount=None):
+        if self.__volume.get_mount() is not None:
+            # Already mounted.
+            return
         def mounted(volume, result):
             if not self.__volume.mount_finish(result):
                 return
@@ -192,6 +196,9 @@ class MediaIcon(WinIcon):
 
     def unmount(self):
         mount = self.__volume.get_mount()
+        if mount is None:
+            # Already unmounted.
+            return
 
         def unmounted(mount, result):
             mount.unmount_finish(result)

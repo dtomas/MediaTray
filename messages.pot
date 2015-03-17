@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2015-03-15 09:00+CET\n"
+"POT-Creation-Date: 2015-03-17 09:48+CET\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,15 +23,15 @@ msgstr ""
 msgid "Scroll up to show windows of all workspaces."
 msgstr ""
 
-#: mediatray/mediaicon.py:389
+#: mediatray/mediaicon.py:517
 msgid "Eject"
 msgstr ""
 
-#: mediatray/mediaicon.py:400
+#: mediatray/mediaicon.py:528
 msgid "Unmount"
 msgstr ""
 
-#: mediatray/mediaicon.py:405
+#: mediatray/mediaicon.py:533
 msgid "Mount"
 msgstr ""
 
@@ -93,5 +93,21 @@ msgstr ""
 
 #: tipsH:19 tipsV:6 tipsV:9 tipsV:19
 msgid "Bottom"
+msgstr ""
+
+#: tipsH:20 tipsV:20
+msgid "Automount"
+msgstr ""
+
+#: tipsH:21 tipsV:21
+msgid "No automatic mounting"
+msgstr ""
+
+#: tipsH:22 tipsV:22
+msgid "Mount volume when inserted"
+msgstr ""
+
+#: tipsH:23 tipsV:23
+msgid "Open volume when inserted"
 msgstr ""
 
