@@ -284,8 +284,11 @@ class MediaIcon(WinIcon):
             xid = self.visible_windows[0].get_xid()
             data.set(data.target, 8, apply(struct.pack, ['1i', xid]))
         else:
-            root_path = self.mountpoint
-            if root_path is None:
+            mount = self.__volume.get_mount()
+            if mount is None:
+                return
+            root = mount.get_root()
+            if root is None:
                 return
             data.set_uris([root.get_uri()])
 
