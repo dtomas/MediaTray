@@ -96,7 +96,6 @@ msgid "Bottom"
 msgstr "Unten"
 
 #: tipsH:20 tipsV:20
-#, fuzzy
 msgid "Automount"
 msgstr "Automatisches Einhängen"
 
