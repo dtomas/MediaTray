@@ -188,11 +188,12 @@ class MediaIcon(WinIcon):
         def mounted(volume, result):
             if not self.__volume.mount_finish(result):
                 return
+            mount = volume.get_mount()
             if on_mount is not None:
-                on_mount(self.__volume.get_mount())
+                on_mount(mount)
             if self.__unmount_handler is not None:
-                volume.get_mount().disconnect(self.__unmount_handler)
-            self.__unmount_handler = volume.get_mount().connect(
+                mount.disconnect(self.__unmount_handler)
+            self.__unmount_handler = mount.connect(
                 "unmounted", self.__unmounted
             )
             self.update_icon()
