@@ -2,8 +2,8 @@
 			Shows removable media
 			by Dennis Tomas
 
-0.0.3 (unreleased)
-~~~~~
+0.1 (unreleased)
+~~~
 Optional automatic mounting or opening.
 Now using TrayLib 0.4.2, see TrayLib/Help/Changes.
 
