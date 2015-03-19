@@ -5,10 +5,13 @@ from xml.sax.saxutils import escape
 from ConfigParser import RawConfigParser, NoOptionError
 
 import gtk
+
 import gio
+
+import rox
 from rox import filer
 
-from traylib import *
+from traylib import TARGET_WNCK_WINDOW_ID, TARGET_URI_LIST, ICON_THEME
 from traylib.winicon import WinIcon
 from traylib.winmenu import get_filer_window_path
 
