@@ -8,7 +8,8 @@ sys.path.append(
 )
 
 import rox
-from mediatray.main import MediaTrayMain, SITE, PROJECT
+from mediatray.config import SITE, PROJECT
+from mediatray.main import MediaTrayMain
 
 __builtins__._ = rox.i18n.translation(os.path.join(rox.app_dir, 'Messages'))
 

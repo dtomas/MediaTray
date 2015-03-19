@@ -5,7 +5,6 @@ from traylib.main import Main
 from traylib.winicon import WinIconConfig
 
 from mediatray import MediaTray
-from mediatray.config import PROJECT, SITE
 from mediatray.mediaicon_config import MediaIconConfig, PIN_LEFT, PIN_TOP
 
 
