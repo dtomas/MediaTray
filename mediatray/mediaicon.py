@@ -127,8 +127,9 @@ def get_case_sensitive_path(path, root = '/'):
 
 class MediaIcon(WinIcon):
 
-    def __init__(self, icon_config, win_config, mediaicon_config, volume):
-        WinIcon.__init__(self, icon_config, win_config)
+    def __init__(self, icon_config, win_config, mediaicon_config, volume,
+                 screen):
+        WinIcon.__init__(self, icon_config, win_config, screen)
 
         self.__mediaicon_config = mediaicon_config
         mediaicon_config.add_configurable(self)

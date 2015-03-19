@@ -35,7 +35,7 @@ class MediaIconManager(WinIconManager):
 
     def __volume_added(self, volume_monitor, volume, initial=False):
         icon = MediaIcon(self.icon_config, self.__win_config,
-                         self.__mediaicon_config, volume)
+                         self.__mediaicon_config, volume, self.screen)
         self.tray.add_icon(None, volume, icon)
         if not initial:
             self.__automount_actions[self.mediaicon_config.automount](icon)
