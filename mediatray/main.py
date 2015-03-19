@@ -1,6 +1,7 @@
 import rox
 from rox.options import Option
 
+from traylib import wnck
 from traylib.main import Main
 from traylib.winicon import WinIconConfig
 
@@ -12,6 +13,7 @@ class MediaTrayMain(Main):
     
     def __init__(self):
         Main.__init__(self, "MediaTray")
+        self.__screen = wnck.screen_get_default() if wnck is not None else None
 
     def init_options(self):
         Main.init_options(self)
@@ -41,7 +43,7 @@ class MediaTrayMain(Main):
 
     def mainloop(self, app_args):
         Main.mainloop(self, app_args, MediaTray, self.__win_config,
-                      self.__mediaicon_config)
+                      self.__mediaicon_config, self.__screen)
 
     def options_changed(self):
         if self.__o_arrow.has_changed:

@@ -9,9 +9,9 @@ ICON_THEME.append_search_path(os.path.join(rox.app_dir, 'icons'))
 
 class MainIcon(MenuIcon):
 
-    def __init__(self, tray, icon_config, tray_config):
+    def __init__(self, tray, icon_config, tray_config, win_config):
         MenuIcon.__init__(self, tray, icon_config, tray_config)
-        tray.win_config.add_configurable(self)
+        win_config.add_configurable(self)
 
     def update_option_all_workspaces(self):
         self.update_tooltip()
