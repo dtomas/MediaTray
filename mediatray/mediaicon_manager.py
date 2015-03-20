@@ -26,19 +26,22 @@ def manage_mediaicons(tray, screen, icon_config, win_config, mediaicon_config):
     def volume_removed(self, volume_monitor, volume):
         tray.remove_icon(volume)
 
-    volume_added_handler = volume_monitor.connect("volume-added",
-                                                  volume_added)
-    volume_removed_handler = volume_monitor.connect("volume-removed",
-                                                    volume_removed)
+    class handlers:
+        pass
 
     def manage():
+        handlers.volume_added_handler = volume_monitor.connect("volume-added",
+                                                               volume_added)
+        handlers.volume_removed_handler = (
+            volume_monitor.connect("volume-removed", volume_removed)
+        )
         for volume in volume_monitor.get_volumes():
             volume_added(volume_monitor, volume, initial=True)
             yield None
 
     def unmanage():
-        volume_monitor.disconnect(volume_added_handler)
-        volume_monitor.disconnect(volume_removed_handler)
+        volume_monitor.disconnect(handlers.volume_added_handler)
+        volume_monitor.disconnect(handlers.volume_removed_handler)
         yield None
 
     return manage, unmanage
