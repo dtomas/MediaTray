@@ -1,3 +1,5 @@
+from functools import partial
+
 import rox
 from rox.options import Option
 
@@ -42,8 +44,15 @@ class MediaTrayMain(Main):
         self.icon_config.hidden = False
 
     def mainloop(self, app_args):
-        Main.mainloop(self, app_args, MediaTray, self.__win_config,
-                      self.__mediaicon_config, self.__screen)
+        Main.mainloop(
+            self, app_args,
+            partial(
+                MediaTray,
+                win_config=self.__win_config,
+                mediaicon_config=self.__mediaicon_config,
+                screen=self.__screen
+            )
+        )
 
     def options_changed(self):
         if self.__o_arrow.has_changed:
