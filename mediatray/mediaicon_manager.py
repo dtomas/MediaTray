@@ -1,50 +1,44 @@
 import gio
 
-from traylib.winicon_manager import WinIconManager
-
 from mediatray.mediaicon import MediaIcon
 from mediatray.mediaicon_config import AUTOMOUNT, AUTOOPEN
 
 
-class MediaIconManager(WinIconManager):
+def manage_mediaicons(tray, screen, icon_config, win_config, mediaicon_config):
 
-    def __init__(self, tray, screen, icon_config, win_config,
-                 mediaicon_config):
-        WinIconManager.__init__(self, tray, screen)
-        self.__icon_config = icon_config
-        self.__win_config = win_config
-        self.__mediaicon_config = mediaicon_config
-        self.__automount_actions = {
-            0: lambda: None,
-            1: MediaIcon.mount,
-            2: MediaIcon.open,
-        }
+    volume_monitor = gio.volume_monitor_get()
 
-    def init(self):
-        self.__volume_monitor = gio.volume_monitor_get()
+    automount_actions = {
+        0: lambda: None,
+        1: MediaIcon.mount,
+        2: MediaIcon.open,
+    }
 
-        for volume in self.__volume_monitor.get_volumes():
-            self.__volume_added(self.__volume_monitor, volume, initial=True)
+    tray.add_box(None)
+
+    def volume_added(volume_monitor, volume, initial=False):
+        icon = MediaIcon(icon_config, win_config, mediaicon_config, volume,
+                         screen)
+        tray.add_icon(None, volume, icon)
+        if not initial:
+            automount_actions[mediaicon_config.automount](icon)
+
+    def volume_removed(self, volume_monitor, volume):
+        tray.remove_icon(volume)
+
+    volume_added_handler = volume_monitor.connect("volume-added",
+                                                  volume_added)
+    volume_removed_handler = volume_monitor.connect("volume-removed",
+                                                    volume_removed)
+
+    def manage():
+        for volume in volume_monitor.get_volumes():
+            volume_added(volume_monitor, volume, initial=True)
             yield None
 
-        for x in WinIconManager.init(self):
-            yield x
+    def unmanage():
+        volume_monitor.disconnect(volume_added_handler)
+        volume_monitor.disconnect(volume_removed_handler)
+        yield None
 
-        self.__volume_monitor.connect("volume-added", self.__volume_added)
-        self.__volume_monitor.connect("volume-removed", self.__volume_removed)
-
-    def __volume_added(self, volume_monitor, volume, initial=False):
-        icon = MediaIcon(self.icon_config, self.__win_config,
-                         self.__mediaicon_config, volume, self.screen)
-        self.tray.add_icon(None, volume, icon)
-        if not initial:
-            self.__automount_actions[self.mediaicon_config.automount](icon)
-        self.icon_added(icon)
-
-    def __volume_removed(self, volume_monitor, volume):
-        self.tray.remove_icon(volume)
-
-    icon_config = property(lambda self : self.__icon_config)
-    win_config = property(lambda self : self.__win_config)
-    mediaicon_config = property(lambda self : self.__mediaicon_config)
-
+    return manage, unmanage
