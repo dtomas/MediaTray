@@ -4,6 +4,8 @@
 
 0.1.1 (unreleased)
 ~~~~~
+Close windows _before_ volume is unmounted.
+Menu item to open volume in terminal.
 Include Terminal windows in an icon's menu.
 Handle external mount/unmount.
 Now using TrayLib 0.5, see TrayLib/Help/Changes.

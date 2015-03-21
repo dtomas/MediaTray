@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2015-03-17 09:48+CET\n"
+"POT-Creation-Date: 2015-03-21 09:27+CET\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,16 +23,20 @@ msgstr ""
 msgid "Scroll up to show windows of all workspaces."
 msgstr ""
 
-#: mediatray/mediaicon.py:517
+#: mediatray/mediaicon.py:559
 msgid "Eject"
 msgstr ""
 
-#: mediatray/mediaicon.py:528
+#: mediatray/mediaicon.py:570
 msgid "Unmount"
 msgstr ""
 
-#: mediatray/mediaicon.py:533
+#: mediatray/mediaicon.py:575
 msgid "Mount"
+msgstr ""
+
+#: mediatray/mediaicon.py:582
+msgid "Open in terminal"
 msgstr ""
 
 #: tipsH:1 tipsV:1

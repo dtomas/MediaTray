@@ -10,7 +10,8 @@ import gtk
 import gio
 
 import rox
-from rox import filer
+from rox import filer, processes
+from rox.options import Option, OptionGroup
 
 from traylib import TARGET_WNCK_WINDOW_ID, TARGET_URI_LIST, ICON_THEME
 from traylib.winicon import WinIcon
@@ -77,6 +78,10 @@ if volumes_on_pinboard:
         json.dump(volumes_on_pinboard, f)
     finally:
         f.close()
+
+
+filer_options = OptionGroup("ROX-Filer", "Options", "rox.sourceforge.net")
+o_terminal = Option("menu_xterm", "xterm", filer_options)
 
 
 class WindowsAutoRun(object):
@@ -207,7 +212,24 @@ class MediaIcon(WinIcon):
             if not mount.unmount_finish(result):
                 return
             self.unmounted(mount)
-        mount.unmount(unmounted)
+
+        windows = set(self.windows)
+        if windows:
+            closed_windows = set()
+
+            def window_closed(screen, window):
+                closed_windows.add(window)
+                if closed_windows.intersection(windows) == windows:
+                    self.screen.disconnect(window_closed_handler)
+                    mount.unmount(unmounted)
+
+            window_closed_handler = self.screen.connect(
+                "window-closed", window_closed
+            )
+            for window in self.windows:
+                window.close(0)
+        else:
+            mount.unmount(unmounted)
 
     def open(self):
         """Open the volume's mount point in ROX-Filer."""
@@ -215,6 +237,21 @@ class MediaIcon(WinIcon):
 
         def open(mount):
             filer.open_dir(mount.get_root().get_path())
+
+        if mount is None:
+            self.mount(on_mount=open)
+        else:
+            open(mount)
+
+    def open_in_terminal(self):
+        mount = self.__volume.get_mount()
+
+        def open(mount):
+            terminal_cmd = o_terminal.value.split()
+            cwd = os.getcwd()
+            os.chdir(mount.get_root().get_path())
+            processes.PipeThroughCommand(terminal_cmd, None, None).start()
+            os.chdir(cwd)
 
         if mount is None:
             self.mount(on_mount=open)
@@ -537,12 +574,12 @@ class MediaIcon(WinIcon):
             menu.prepend(gtk.SeparatorMenuItem())
 
         if self.__volume.can_eject():
-            eject_item = gtk.ImageMenuItem()
-            eject_item.set_label(_("Eject"))
+            eject_item = gtk.ImageMenuItem(_("Eject"))
             eject_image = gtk.image_new_from_pixbuf(
                 ICON_THEME.load_icon("media-eject", gtk.ICON_SIZE_MENU, 0)
             )
             eject_item.set_image(eject_image)
+            eject_item.set_use_stock(False)
             eject_item.connect("activate", lambda item: self.eject()) 
             menu.prepend(eject_item)
 
@@ -559,6 +596,18 @@ class MediaIcon(WinIcon):
                 menu.prepend(mount_item)
 
             menu.prepend(gtk.SeparatorMenuItem())
+
+            open_in_terminal_item = gtk.ImageMenuItem(_("Open in terminal"))
+            open_in_terminal_image = gtk.image_new_from_pixbuf(
+                ICON_THEME.load_icon("utilities-terminal",
+                                     gtk.ICON_SIZE_MENU, 0)
+            )
+            open_in_terminal_item.set_image(open_in_terminal_image)
+            open_in_terminal_item.connect(
+                "activate", lambda item: self.open_in_terminal()
+            )
+            menu.prepend(open_in_terminal_item)
+
             open_item = gtk.ImageMenuItem(gtk.STOCK_OPEN)
             open_item.connect("activate", lambda item: self.open())
             menu.prepend(open_item)

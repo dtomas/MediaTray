@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2015-03-17 09:48+CET\n"
+"POT-Creation-Date: 2015-03-21 09:27+CET\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,17 +23,21 @@ msgstr "Abwärts rollen, um nur Fenster dieser Arbeitsfläche anzuzeigen."
 msgid "Scroll up to show windows of all workspaces."
 msgstr "Aufwärts rollen, um Fenster aller Arbeitsflächen anzuzeigen."
 
-#: mediatray/mediaicon.py:517
+#: mediatray/mediaicon.py:559
 msgid "Eject"
 msgstr "Auswerfen"
 
-#: mediatray/mediaicon.py:528
+#: mediatray/mediaicon.py:570
 msgid "Unmount"
 msgstr "Aushängen"
 
-#: mediatray/mediaicon.py:533
+#: mediatray/mediaicon.py:575
 msgid "Mount"
 msgstr "Einhängen"
+
+#: mediatray/mediaicon.py:582
+msgid "Open in terminal"
+msgstr "Im Terminal öffnen"
 
 #: tipsH:1 tipsV:1
 msgid "Behaviour"
