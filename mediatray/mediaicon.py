@@ -148,11 +148,6 @@ class MediaIcon(WinIcon):
 
         mount = self.__volume.get_mount()
 
-        self.__unmount_handler = (
-            mount.connect("unmounted", self.__unmounted) if mount is not None
-            else None
-        )
-
         self.add_to_pinboard()
         
         self.__set_icon(self.get_icon_path())
@@ -190,20 +185,12 @@ class MediaIcon(WinIcon):
             # Already mounted.
             return
         def mounted(volume, result):
-            if not self.__volume.mount_finish(result):
+            if not volume.mount_finish(result):
                 return
             mount = volume.get_mount()
             if on_mount is not None:
                 on_mount(mount)
-            if self.__unmount_handler is not None:
-                mount.disconnect(self.__unmount_handler)
-            self.__unmount_handler = mount.connect(
-                "unmounted", self.__unmounted
-            )
-            self.update_icon()
-            self.update_emblem()
-            self.__set_icon(self.get_icon_path())
-            self.add_to_pinboard()
+            self.mounted()
         self.__volume.mount(gtk.MountOperation(), mounted)
 
     def unmount(self):
@@ -214,7 +201,9 @@ class MediaIcon(WinIcon):
             return
 
         def unmounted(mount, result):
-            mount.unmount_finish(result)
+            if not mount.unmount_finish(result):
+                return
+            self.unmounted(mount)
         mount.unmount(unmounted)
 
     def open(self):
@@ -307,10 +296,15 @@ class MediaIcon(WinIcon):
                 return
             data.set_uris([root.get_uri()])
 
-    def __unmounted(self, mount):
+    def mounted(self):
+        mount = self.__volume.get_mount()
+        self.update_icon()
         self.update_emblem()
-        mount.disconnect(self.__unmount_handler)
-        self.__unmount_handler = None
+        self.__set_icon(self.get_icon_path())
+        self.add_to_pinboard()
+
+    def unmounted(self, mount):
+        self.update_emblem()
         self.__removed(self.__volume, mount)
 
 

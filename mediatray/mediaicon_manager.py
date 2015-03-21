@@ -23,8 +23,16 @@ def manage_mediaicons(tray, screen, icon_config, win_config, mediaicon_config):
         if not initial:
             automount_actions[mediaicon_config.automount](icon)
 
-    def volume_removed(self, volume_monitor, volume):
+    def volume_removed(volume_monitor, volume):
         tray.remove_icon(volume)
+
+    def mount_added(volume, mount):
+        for icon in tray.icons:
+            icon.mounted()
+
+    def mount_removed(volume, mount):
+        for icon in tray.icons:
+            icon.unmounted(mount)
 
     class handlers:
         pass
@@ -35,6 +43,11 @@ def manage_mediaicons(tray, screen, icon_config, win_config, mediaicon_config):
         handlers.volume_removed_handler = (
             volume_monitor.connect("volume-removed", volume_removed)
         )
+        handlers.mount_added_handler = volume_monitor.connect("mount-added",
+                                                              mount_added)
+        handlers.mount_removed_handler = (
+            volume_monitor.connect("mount-removed", mount_removed)
+        )
         for volume in volume_monitor.get_volumes():
             volume_added(volume_monitor, volume, initial=True)
             yield None
@@ -42,6 +55,8 @@ def manage_mediaicons(tray, screen, icon_config, win_config, mediaicon_config):
     def unmanage():
         volume_monitor.disconnect(handlers.volume_added_handler)
         volume_monitor.disconnect(handlers.volume_removed_handler)
+        volume_monitor.disconnect(handlers.mount_added_handler)
+        volume_monitor.disconnect(handlers.mount_removed_handler)
         yield None
 
     return manage, unmanage

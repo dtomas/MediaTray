@@ -4,6 +4,7 @@
 
 0.1.1 (unreleased)
 ~~~~~
+Handle external mount/unmount.
 Now using TrayLib 0.5, see TrayLib/Help/Changes.
 
 0.1
