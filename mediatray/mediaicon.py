@@ -1,4 +1,5 @@
 import os
+import re
 import struct
 import json
 from xml.sax.saxutils import escape
@@ -123,6 +124,8 @@ def get_case_sensitive_path(path, root = '/'):
             return os.path.join(get_case_sensitive_path(dirname), filename)
     return ''
 
+
+_terminal_title_re = re.compile(r'^.+\@.+\: (?P<path>.+)$')
 
 
 class MediaIcon(WinIcon):
@@ -488,7 +491,15 @@ class MediaIcon(WinIcon):
         root_path = self.mountpoint
         if root_path is None:
             return False
+        class_group = window.get_class_group().get_name()
         path = os.path.expanduser(get_filer_window_path(window))
+        if not path:
+            match = _terminal_title_re.match(window.get_name())
+            if match is None:
+                return None
+            path = match.groupdict()['path']
+        if not path:
+            return False
         return (
             path == root_path or
                 os.path.isdir(path) and

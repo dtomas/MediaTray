@@ -4,6 +4,7 @@
 
 0.1.1 (unreleased)
 ~~~~~
+Include Terminal windows in an icon's menu.
 Handle external mount/unmount.
 Now using TrayLib 0.5, see TrayLib/Help/Changes.
 
