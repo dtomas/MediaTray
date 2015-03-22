@@ -57,6 +57,8 @@ def manage_mediaicons(tray, screen, icon_config, win_config, mediaicon_config):
         volume_monitor.disconnect(handlers.volume_removed_handler)
         volume_monitor.disconnect(handlers.mount_added_handler)
         volume_monitor.disconnect(handlers.mount_removed_handler)
+        for icon in tray.icons:
+            icon.remove_from_pinboard()
         yield None
 
     return manage, unmanage

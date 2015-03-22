@@ -4,6 +4,7 @@
 
 0.1.1 (unreleased)
 ~~~~~
+Remove pinboard icons from pinboard when exiting.
 Bugfix: Pinboard icons with empty name.
 Close windows _before_ volume is unmounted.
 Menu item to open volume in terminal.
