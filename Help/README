@@ -12,7 +12,7 @@ To show filer and terminal windows of volumes, you also need python-wnck.
 
 Installation
 ~~~~~~~~~~~~
-Get TaskTray and its submodules from GitHub:
+Get MediaTray and its submodules from GitHub:
 
 $ git clone --recursive https://github.com/dtomas/MediaTray
 
