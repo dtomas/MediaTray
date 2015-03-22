@@ -2,7 +2,7 @@
 			Shows removable media
 			by Dennis Tomas
 
-0.1.1 (unreleased)
+0.1.1
 ~~~~~
 Remove pinboard icons from pinboard when exiting.
 Bugfix: Pinboard icons with empty name.
