@@ -4,6 +4,7 @@
 
 0.1.1 (unreleased)
 ~~~~~
+Bugfix: Pinboard icons with empty name.
 Close windows _before_ volume is unmounted.
 Menu item to open volume in terminal.
 Include Terminal windows in an icon's menu.

@@ -65,12 +65,12 @@ for path in volumes_on_pinboard:
                     '</PinboardRemove>'
                     '<UnsetIcon>'
                         '<Path>' + escape(path) + '</Path>'
-                        '</UnsetIcon>'
+                    '</UnsetIcon>'
                 '</env:Body>'
                 '</env:Envelope>'
         )
         f.close()
-		
+
 if volumes_on_pinboard:
     volumes_on_pinboard = []
     f = open(_volumes_on_pinboard_path, 'w')
@@ -155,8 +155,6 @@ class MediaIcon(WinIcon):
         self.__volume.connect("removed", self.__removed)
 
         mount = self.__volume.get_mount()
-
-        self.add_to_pinboard()
         
         self.__set_icon(self.get_icon_path())
 
@@ -166,6 +164,8 @@ class MediaIcon(WinIcon):
         self.update_emblem()
         self.update_tooltip()
         self.update_is_drop_target()
+
+        self.add_to_pinboard()
 
     @property
     def mountpoint(self):
