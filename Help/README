@@ -14,7 +14,7 @@ Installation
 ~~~~~~~~~~~~
 Get MediaTray and its submodules from GitHub:
 
-$ git clone --recursive https://github.com/dtomas/MediaTray
+$ git clone --recursive https://github.com/dtomas/MediaTray.git
 
 ROX
 ~~~
