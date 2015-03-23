@@ -2,6 +2,10 @@
 			Shows removable media
 			by Dennis Tomas
 
+0.1.2 (unreleased)
+~~~~~
+Improved support for external (un)mounting.
+
 0.1.1
 ~~~~~
 Remove pinboard icons from pinboard when exiting.

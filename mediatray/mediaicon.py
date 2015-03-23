@@ -155,6 +155,11 @@ class MediaIcon(WinIcon):
         self.__volume.connect("removed", self.__removed)
 
         mount = self.__volume.get_mount()
+
+        self.__unmounted_handler = (
+            mount.connect("unmounted", self.unmounted) if mount is not None
+            else None
+        )
         
         self.__set_icon(self.get_icon_path())
 
@@ -198,7 +203,6 @@ class MediaIcon(WinIcon):
             mount = volume.get_mount()
             if on_mount is not None:
                 on_mount(mount)
-            self.mounted()
         self.__volume.mount(gtk.MountOperation(), mounted)
 
     def unmount(self):
@@ -209,9 +213,7 @@ class MediaIcon(WinIcon):
             return
 
         def unmounted(mount, result):
-            if not mount.unmount_finish(result):
-                return
-            self.unmounted(mount)
+            mount.unmount_finish(result)
 
         windows = set(self.windows)
         if windows:
@@ -342,10 +344,15 @@ class MediaIcon(WinIcon):
         self.update_emblem()
         self.__set_icon(self.get_icon_path())
         self.add_to_pinboard()
+        self.__unmounted_handler = mount.connect(
+            "unmounted", self.unmounted
+        )
 
     def unmounted(self, mount):
         self.update_emblem()
         self.__removed(self.__volume, mount)
+        mount.disconnect(self.__unmounted_handler)
+        self.__unmounted_handler = None
 
 
     # Pinboard
@@ -670,3 +677,4 @@ class MediaIcon(WinIcon):
         return False
 
     mediaicon_config = property(lambda self : self.__mediaicon_config)
+    volume = property(lambda self : self.__volume)

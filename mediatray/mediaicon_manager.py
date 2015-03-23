@@ -26,13 +26,10 @@ def manage_mediaicons(tray, screen, icon_config, win_config, mediaicon_config):
     def volume_removed(volume_monitor, volume):
         tray.remove_icon(volume)
 
-    def mount_added(volume, mount):
+    def mount_added(volume_monitor, mount):
         for icon in tray.icons:
-            icon.mounted()
-
-    def mount_removed(volume, mount):
-        for icon in tray.icons:
-            icon.unmounted(mount)
+            if icon.volume.get_mount() is mount:
+                icon.mounted()
 
     class handlers:
         pass
@@ -45,9 +42,6 @@ def manage_mediaicons(tray, screen, icon_config, win_config, mediaicon_config):
         )
         handlers.mount_added_handler = volume_monitor.connect("mount-added",
                                                               mount_added)
-        handlers.mount_removed_handler = (
-            volume_monitor.connect("mount-removed", mount_removed)
-        )
         for volume in volume_monitor.get_volumes():
             volume_added(volume_monitor, volume, initial=True)
             yield None
@@ -56,7 +50,6 @@ def manage_mediaicons(tray, screen, icon_config, win_config, mediaicon_config):
         volume_monitor.disconnect(handlers.volume_added_handler)
         volume_monitor.disconnect(handlers.volume_removed_handler)
         volume_monitor.disconnect(handlers.mount_added_handler)
-        volume_monitor.disconnect(handlers.mount_removed_handler)
         for icon in tray.icons:
             icon.remove_from_pinboard()
         yield None
