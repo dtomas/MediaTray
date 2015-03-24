@@ -10,8 +10,8 @@ def manage_mediaicons(tray, screen, icon_config, win_config, mediaicon_config):
 
     automount_actions = {
         0: lambda icon: None,
-        1: MediaIcon.mount,
-        2: MediaIcon.open,
+        AUTOMOUNT: MediaIcon.mount,
+        AUTOOPEN: MediaIcon.open,
     }
 
     tray.add_box(None)
