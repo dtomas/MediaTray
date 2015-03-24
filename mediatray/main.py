@@ -76,5 +76,3 @@ class MediaTrayMain(Main):
             self.__mediaicon_config.automount = self.__o_automount.int_value
 
         Main.options_changed(self)
-
-    win_config = property(lambda self : self.__win_config)

@@ -1,15 +1,27 @@
 import gio
 
 from mediatray.mediaicon import MediaIcon
-from mediatray.mediaicon_config import AUTOMOUNT, AUTOOPEN
+from mediatray.mediaicon_config import NO_AUTOMOUNT, AUTOMOUNT, AUTOOPEN
 
 
 def manage_mediaicons(tray, screen, icon_config, win_config, mediaicon_config):
+    """
+    Manages a L{mediatray.MediaTray}.
+
+    @param tray: The tray to manage.
+    @param screen: The C{wnck.Screen} or C{None} to disable showing open
+        windows in icon menus.
+    @param icon_config: The config for C{Icon}s.
+    @param win_config: The config for C{WinIcon}s.
+    @param mediaicon_config: The config for C{MediaIcon}s.
+
+    @return: manage, unmanage: functions to start/stop managing the tray.
+    """
 
     volume_monitor = gio.volume_monitor_get()
 
     automount_actions = {
-        0: lambda icon: None,
+        NO_AUTOMOUNT: lambda icon: None,
         AUTOMOUNT: MediaIcon.mount,
         AUTOOPEN: MediaIcon.open,
     }

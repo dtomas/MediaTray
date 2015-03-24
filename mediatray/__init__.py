@@ -11,6 +11,10 @@ from mediatray.mediaicon_manager import manage_mediaicons
 
 
 class MediaTray(ManagedTray):
+    """
+    Tray containing L{mediatray.mediaicon.MediaIcon}s.
+    Managed by L{mediatray.mediaicon_manager.manage_mediaicons}.
+    """
 
     def __init__(self, icon_config, tray_config, win_config, mediaicon_config,
                  screen):
