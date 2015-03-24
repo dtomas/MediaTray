@@ -4,6 +4,7 @@
 
 0.1.2 (unreleased)
 ~~~~~
+Fixed TypeError in manage_mediaicons(). (reported by Abrolag)
 Improved support for external (un)mounting.
 
 0.1.1

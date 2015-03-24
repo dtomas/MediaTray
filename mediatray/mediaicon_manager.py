@@ -9,7 +9,7 @@ def manage_mediaicons(tray, screen, icon_config, win_config, mediaicon_config):
     volume_monitor = gio.volume_monitor_get()
 
     automount_actions = {
-        0: lambda: None,
+        0: lambda icon: None,
         1: MediaIcon.mount,
         2: MediaIcon.open,
     }
