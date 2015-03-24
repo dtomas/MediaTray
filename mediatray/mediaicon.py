@@ -246,6 +246,11 @@ class MediaIcon(WinIcon):
             open(mount)
 
     def open_in_terminal(self):
+        """
+        Open the volume's mount point in a terminal.
+        
+        The terminal command is read from ROX-Filer's menu_xterm option.
+        """
         mount = self.__volume.get_mount()
 
         def open(mount):
@@ -319,11 +324,13 @@ class MediaIcon(WinIcon):
     # Signal handlers
 
     def __removed(self, volume, mount=None):
+        """Called when the volume has been removed."""
         for window in self.windows:
             window.close(0)
         self.remove_from_pinboard(mount)
 
     def __drag_data_get(self, widget, context, data, info, time):
+        """Called when the icon is dragged somewhere."""
         if not self.visible_windows:
             return
         if info == TARGET_WNCK_WINDOW_ID:
@@ -339,6 +346,7 @@ class MediaIcon(WinIcon):
             data.set_uris([root.get_uri()])
 
     def mounted(self):
+        """Called when the volume has been mounted."""
         mount = self.__volume.get_mount()
         self.update_icon()
         self.update_emblem()
@@ -349,6 +357,7 @@ class MediaIcon(WinIcon):
         )
 
     def unmounted(self, mount):
+        """Called when the volume has been unmounted."""
         self.update_emblem()
         self.__removed(self.__volume, mount)
         mount.disconnect(self.__unmounted_handler)
@@ -443,6 +452,7 @@ class MediaIcon(WinIcon):
     # Icon handling
 
     def __set_icon(self, icon_path):
+        """Set the icon to use for the mount point in ROX-Filer."""
         if icon_path is None:
             return
         root_path = self.mountpoint
@@ -463,6 +473,10 @@ class MediaIcon(WinIcon):
         f.close()
 
     def get_individual_icon_path(self):
+        """
+        Get the path of the .DirIcon or an icon defined in Windows'
+        autorun.inf.
+        """
         root_path = self.mountpoint
         if root_path is None:
             return None
@@ -490,6 +504,7 @@ class MediaIcon(WinIcon):
     # Windows autorun support
 
     def __read_windows_autorun(self):
+        """Read path to icon and executable from Windows' autorun.inf."""
         root_path = self.mountpoint
         if root_path is None:
             return None
@@ -529,9 +544,19 @@ class MediaIcon(WinIcon):
     # Methods overridden from WinIcon.
 
     def should_hide_if_no_visible_windows(self):
+        """
+        A mediaicon should be shown regardless of its visible windows.
+        
+        So this always returns C{False}.
+        """
         return False
 
     def should_have_window(self, window):
+        """
+        Determine whether the given window should show up in the menu or not.
+
+        Recognizes ROX-Filer as well as Terminal windows.
+        """
         root_path = self.mountpoint
         if root_path is None:
             return False
@@ -551,18 +576,24 @@ class MediaIcon(WinIcon):
         )
 
     def menu_has_kill(self):
+        """Hide the 'Force Quit' button in the winmenu."""
         return False
 
 
     # Methods overridden from Icon.
 
     def get_icon_path(self):
+        """
+        Get the path to the icon.
+        
+        This may be a .DirIcon, an icon defined in Windows' autorun.inf or
+        an icon from the current icon theme.
+        """
         icon_path = self.get_individual_icon_path()
         if icon_path is not None:
             return icon_path
 
-        icon_names = self.icon_names
-        for icon_name in icon_names:
+        for icon_name in self.icon_names:
             icon_info = ICON_THEME.lookup_icon(icon_name, 48, 0)
             if icon_info is not None:
                 icon_path = icon_info.get_filename()
@@ -573,6 +604,13 @@ class MediaIcon(WinIcon):
         return icon_path
 
     def get_menu_right(self):
+        """
+        Create the right-click menu.
+
+        This will contain items to mount/unmount/eject the volume as well as
+        submenus for every open window. If there is only one open window,
+        the window-related items will be appended to the main menu.
+        """
         menu = WinIcon.get_menu_right(self)
         if not menu:
             menu = gtk.Menu()
@@ -621,12 +659,18 @@ class MediaIcon(WinIcon):
         return menu
 
     def click(self, time=0L):
+        """
+        When a C{MediaIcon} is clicked, the volume is opened, or - if there
+        are open windows - the menu of open windows is shown or - if there is
+        only one window - the window is activated.
+        """
         if WinIcon.click(self):
             return True
         self.open()
         return True
 
     def get_icon_names(self):
+        """Get the icon names for the volume."""
         # Fallback icon, shipped with MediaTray.
         icons = ["drive-harddisk"]
         icon = self.__volume.get_icon()
@@ -635,9 +679,11 @@ class MediaIcon(WinIcon):
         return icons
 
     def make_name(self):
+        """Return the name of the volume."""
         return self.__volume.get_name()
 
     def make_emblem(self):
+        """Return an emblem indicating whether the volume is mounted or not."""
         if not self.__volume.can_mount():
             return None
         return (
@@ -646,6 +692,9 @@ class MediaIcon(WinIcon):
         )
 
     def make_is_drop_target(self):
+        """
+        Files can always be dropped on a C{MediaIcon}, so this returns C{True}.
+        """
         return True
 
     def uris_dropped(self, uri_list, action):
@@ -671,10 +720,18 @@ class MediaIcon(WinIcon):
                 ))
 
     def spring_open(self, time = 0L):
+        """
+        When dragging an item over the menu for a while, the volume is opened
+        or - if there is only one window - this window is activated, or - if
+        there are multiple windows - the windows are cycled through.
+        """
         if WinIcon.spring_open(self, time):
             return True
         self.open()
         return False
 
     mediaicon_config = property(lambda self : self.__mediaicon_config)
+    """C{MediaIcon}-related configuration."""
+
     volume = property(lambda self : self.__volume)
+    """The underlying C{gio.Volume} object."""
