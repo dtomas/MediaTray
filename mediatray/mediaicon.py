@@ -2,7 +2,6 @@ import os
 import re
 import struct
 import json
-from xml.sax.saxutils import escape
 from ConfigParser import RawConfigParser, NoOptionError
 
 import gtk
@@ -55,21 +54,8 @@ except IOError:
 
 for path in volumes_on_pinboard:
     if not os.path.isdir(path):
-        f = os.popen('rox --RPC', 'w')
-        f.write(
-            '<?xml version="1.0"?>'
-            '<env:Envelope xmlns:env="http://www.w3.org/2001/12/soap-envelope">'
-                '<env:Body xmlns="http://rox.sourceforge.net/SOAP/ROX-Filer">'
-                    '<PinboardRemove>'
-                        '<Path>' + escape(path) + '</Path>'
-                    '</PinboardRemove>'
-                    '<UnsetIcon>'
-                        '<Path>' + escape(path) + '</Path>'
-                    '</UnsetIcon>'
-                '</env:Body>'
-                '</env:Envelope>'
-        )
-        f.close()
+        filer.rpc.PinboardRemove(Path=path)
+        filer.rpc.UnsetIcon(Path=path)
 
 if volumes_on_pinboard:
     volumes_on_pinboard = []
@@ -273,32 +259,23 @@ class MediaIcon(WinIcon):
 
     def copy(self, uri_list, move=False):
         """Copy or move uris to the volume (via ROX-Filer).""" 
-        root_path = self.mountpoint
-        if root_path is None:
-            return
-        if move:
-            action = 'Move'
-        else:
-            action = 'Copy'
-        f = os.popen('rox --RPC', 'w')
-        xml = (
-            '<?xml version="1.0"?>'
-            '<env:Envelope xmlns:env="http://www.w3.org/2001/12/soap-envelope">'
-            '<env:Body xmlns="http://rox.sourceforge.net/SOAP/ROX-Filer">'
-            '<%s><From>' % action
-        )
-        for uri in uri_list:
-            if not uri.startswith('file'):
-                continue
-            path = rox.get_local_path(uri)
-            xml += '<File>%s</File>' % escape(path)
-        xml += (
-            '</From><To>%s</To></%s></env:Body></env:Envelope>' % (
-                escape(self.__volume.get_mount().get_root().get_path()), action
+        mount = self.__volume.get_mount()
+
+        def copy(mount):
+            root_path = mount.get_root().get_path()
+            if move:
+                action = filer.rpc.Move
+            else:
+                action = filer.rpc.Copy
+            action(
+                From={'File': [rox.get_local_path(uri) for uri in uri_list]},
+                To={'File': root_path}
             )
-        )
-        f.write(xml)
-        f.close()
+
+        if mount is None:
+            self.mount(on_mount=copy)
+        else:
+            copy(mount)
 
 
     # Methods called when MediaIconConfig has changed.
@@ -379,22 +356,13 @@ class MediaIcon(WinIcon):
         root_path = self.mountpoint
         if root_path is None:
             return
-        f = os.popen('rox --RPC', 'w')
-        rpc = (
-            '<?xml version="1.0"?>'
-            '<env:Envelope xmlns:env="http://www.w3.org/2001/12/soap-envelope">'
-                '<env:Body xmlns="http://rox.sourceforge.net/SOAP/ROX-Filer">'
-                    '<PinboardAdd>'
-                        '<Path>' + escape(root_path) + '</Path>'
-                        '<Label>' + escape(self.name) + '</Label>'
-                        '<X>' + str(self.mediaicon_config.pin_x) + '</X>'
-                        '<Y>' + str(self.mediaicon_config.pin_y) + '</Y>'
-                        '<Update>1</Update>'
-                    '</PinboardAdd>'
-                '</env:Body>'
-            '</env:Envelope>')
-        f.write(rpc)
-        f.close()
+        filer.rpc.PinboardAdd(
+            Path=root_path,
+            Label=self.name,
+            X=self.mediaicon_config.pin_x,
+            Y=self.mediaicon_config.pin_y,
+            Update=1,
+        )
         if root_path not in volumes_on_pinboard:
             volumes_on_pinboard.append(root_path)
             f = open(_volumes_on_pinboard_path, 'w')
@@ -418,27 +386,8 @@ class MediaIcon(WinIcon):
         root_path = root.get_path()
         if not root_path:
             return
-        f = os.popen('rox --RPC', 'w')
-        tmp = (
-            '<?xml version="1.0"?>'
-            '<env:Envelope xmlns:env="http://www.w3.org/2001/12/soap-envelope">'
-                '<env:Body xmlns="http://rox.sourceforge.net/SOAP/ROX-Filer">'
-                    '<PinboardRemove>'
-                        '<Path>' + escape(root_path) + '</Path>'
-                    '</PinboardRemove>'
-        )
-        if unset_icon:
-            tmp += (
-                    '<UnsetIcon>'
-                        '<Path>' + escape(root_path) + '</Path>'
-                    '</UnsetIcon>'
-            )
-        tmp += (
-                '</env:Body>'
-            '</env:Envelope>'
-        )
-        f.write(tmp)
-        f.close()
+        filer.rpc.PinboardRemove(Path=root_path)
+        filer.rpc.UnsetIcon(Path=root_path)
         if root_path in volumes_on_pinboard:
             volumes_on_pinboard.remove(root_path)
             f = open(_volumes_on_pinboard_path, 'w')
@@ -458,19 +407,7 @@ class MediaIcon(WinIcon):
         root_path = self.mountpoint
         if root_path is None:
             return
-        f = os.popen('rox --RPC', 'w')
-        f.write(
-            '<?xml version="1.0"?>'
-            '<env:Envelope xmlns:env="http://www.w3.org/2001/12/soap-envelope">'
-                '<env:Body xmlns="http://rox.sourceforge.net/SOAP/ROX-Filer">'
-                    '<SetIcon>'
-                        '<Path>' + escape(root_path) + '</Path>'
-                        '<Icon>' + escape(icon_path) + '</Icon>'
-                    '</SetIcon>'
-                '</env:Body>'
-            '</env:Envelope>'
-        )
-        f.close()
+        filer.rpc.SetIcon(Path=root_path, Icon=icon_path)
 
     def get_individual_icon_path(self):
         """
@@ -704,20 +641,10 @@ class MediaIcon(WinIcon):
         If the volume is mounted, the files are copied (or moved) to the
         volume. If not, it is mounted and the files will be copied as soon as
         it's mounted.  (see property_changed())"""
-        if self.__volume.get_mount() is not None:
-            if action == gtk.gdk.ACTION_COPY:
-                self.copy(uri_list)
-            elif action == gtk.gdk.ACTION_MOVE:
-                self.copy(uri_list, True)
-        else:
-            if action == gtk.gdk.ACTION_COPY:
-                self.mount(on_mount=partial(
-                    self.copy, uri_list=uri_list, move=False
-                ))
-            elif action == gtk.gdk.ACTION_MOVE:
-                self.mount(on_mount=partial(
-                    self.copy, uri_list=uri_list, move=True
-                ))
+        if action == gtk.gdk.ACTION_COPY:
+            self.copy(uri_list)
+        elif action == gtk.gdk.ACTION_MOVE:
+            self.copy(uri_list, True)
 
     def spring_open(self, time = 0L):
         """
