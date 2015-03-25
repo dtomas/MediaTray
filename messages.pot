@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2015-03-21 09:27+CET\n"
+"POT-Creation-Date: 2015-03-25 22:21+CET\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,27 +15,55 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 
 
-#: mediatray/main_icon.py:33
+#: mediatray/add_host_window.py:10 mediatray/main_icon.py:41
+msgid "Add Host"
+msgstr ""
+
+#: mediatray/add_host_window.py:38
+msgid "Protocol"
+msgstr ""
+
+#: mediatray/add_host_window.py:39
+msgid "Hostname"
+msgstr ""
+
+#: mediatray/add_host_window.py:40
+msgid "Username"
+msgstr ""
+
+#: mediatray/add_host_window.py:41
+msgid "Path"
+msgstr ""
+
+#: mediatray/hosticon.py:29
+msgid "Connect"
+msgstr ""
+
+#: mediatray/hosticon.py:30
+msgid "Disconnect"
+msgstr ""
+
+#: mediatray/main_icon.py:51
 msgid "Scroll down to only show windows of this workspace."
 msgstr ""
 
-#: mediatray/main_icon.py:35
+#: mediatray/main_icon.py:53
 msgid "Scroll up to show windows of all workspaces."
 msgstr ""
 
-#: mediatray/mediaicon.py:559
-msgid "Eject"
-msgstr ""
-
-#: mediatray/mediaicon.py:570
-msgid "Unmount"
-msgstr ""
-
-#: mediatray/mediaicon.py:575
+#: mediatray/mediaicon.py:73
 msgid "Mount"
 msgstr ""
 
-#: mediatray/mediaicon.py:582
+#: mediatray/mediaicon.py:74
+msgid "Unmount"
+msgstr ""
+
+#: mediatray/mediaicon.py:235
+msgid "Eject"
+msgstr ""
+
+#: mediatray/mounticon.py:419
 msgid "Open in terminal"
 msgstr ""
 
