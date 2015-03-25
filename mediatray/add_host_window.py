@@ -21,7 +21,9 @@ class AddHostWindow(gtk.Dialog):
             gobject.TYPE_STRING, gobject.TYPE_STRING
         )
         self.__protocols_model.append(["SSH", "ssh"])
-        self.__protocols_model.append(["SFTP", "sftp"])
+        self.__protocols_model.append(["FTP", "ftp"])
+        self.__protocols_model.append(["WebDAV", "dav"])
+        self.__protocols_model.append(["SMB", "smb"])
         self.__protocol_select = gtk.ComboBox()
         self.__protocol_select.set_entry_text_column(0)
         self.__protocol_select.set_model(self.__protocols_model)
