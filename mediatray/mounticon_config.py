@@ -11,7 +11,7 @@ AUTOMOUNT = 1
 AUTOOPEN = 2
 
 
-class MediaIconConfig(Config):
+class MountIconConfig(Config):
     pin = Attribute()
     """C{True} if icons should be added to the pinboard."""
 

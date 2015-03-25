@@ -1,10 +1,11 @@
 import gio
 
 from mediatray.mediaicon import MediaIcon
-from mediatray.mediaicon_config import NO_AUTOMOUNT, AUTOMOUNT, AUTOOPEN
+
+from mediatray.mounticon_config import NO_AUTOMOUNT, AUTOMOUNT, AUTOOPEN
 
 
-def manage_mediaicons(tray, screen, icon_config, win_config, mediaicon_config):
+def manage_mediaicons(tray, screen, icon_config, win_config, mounticon_config):
     """
     Manages a L{mediatray.MediaTray}.
 
@@ -13,7 +14,7 @@ def manage_mediaicons(tray, screen, icon_config, win_config, mediaicon_config):
         windows in icon menus.
     @param icon_config: The config for C{Icon}s.
     @param win_config: The config for C{WinIcon}s.
-    @param mediaicon_config: The config for C{MediaIcon}s.
+    @param mounticon_config: The config for C{MountIcon}s.
 
     @return: manage, unmanage: functions to start/stop managing the tray.
     """
@@ -29,19 +30,14 @@ def manage_mediaicons(tray, screen, icon_config, win_config, mediaicon_config):
     tray.add_box(None)
 
     def volume_added(volume_monitor, volume, initial=False):
-        icon = MediaIcon(icon_config, win_config, mediaicon_config, volume,
+        icon = MediaIcon(icon_config, win_config, mounticon_config, volume,
                          screen)
         tray.add_icon(None, volume, icon)
         if not initial:
-            automount_actions[mediaicon_config.automount](icon)
+            automount_actions[mounticon_config.automount](icon)
 
     def volume_removed(volume_monitor, volume):
         tray.remove_icon(volume)
-
-    def mount_added(volume_monitor, mount):
-        for icon in tray.icons:
-            if icon.volume.get_mount() is mount:
-                icon.mounted()
 
     class handlers:
         pass
@@ -52,8 +48,6 @@ def manage_mediaicons(tray, screen, icon_config, win_config, mediaicon_config):
         handlers.volume_removed_handler = (
             volume_monitor.connect("volume-removed", volume_removed)
         )
-        handlers.mount_added_handler = volume_monitor.connect("mount-added",
-                                                              mount_added)
         for volume in volume_monitor.get_volumes():
             volume_added(volume_monitor, volume, initial=True)
             yield None
@@ -61,9 +55,6 @@ def manage_mediaicons(tray, screen, icon_config, win_config, mediaicon_config):
     def unmanage():
         volume_monitor.disconnect(handlers.volume_added_handler)
         volume_monitor.disconnect(handlers.volume_removed_handler)
-        volume_monitor.disconnect(handlers.mount_added_handler)
-        for icon in tray.icons:
-            icon.remove_from_pinboard()
         yield None
 
     return manage, unmanage

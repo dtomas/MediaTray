@@ -2,6 +2,10 @@
 			Shows removable media
 			by Dennis Tomas
 
+0.2 (unreleased)
+~~~
+Adding SSH hosts.
+
 0.1.2 (unreleased)
 ~~~~~
 Make an icon without visible windows draggable as text/uri-list.

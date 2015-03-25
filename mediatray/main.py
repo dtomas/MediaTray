@@ -8,7 +8,8 @@ from traylib.main import Main
 from traylib.winicon import WinIconConfig
 
 from mediatray import MediaTray
-from mediatray.mediaicon_config import MediaIconConfig, PIN_LEFT, PIN_TOP
+from mediatray.mounticon_config import MountIconConfig, PIN_LEFT, PIN_TOP
+from mediatray.host_manager import HostManager
 
 
 class MediaTrayMain(Main):
@@ -32,7 +33,7 @@ class MediaTrayMain(Main):
             all_workspaces=self.__o_all_workspaces.int_value,
             arrow=self.__o_arrow.int_value,
         )
-        self.__mediaicon_config = MediaIconConfig(
+        self.__mounticon_config = MountIconConfig(
             pin=self.__o_pin.int_value,
             pin_x=self.__o_pin_x.int_value,
             pin_y=self.__o_pin_y.int_value,
@@ -49,8 +50,9 @@ class MediaTrayMain(Main):
             partial(
                 MediaTray,
                 win_config=self.__win_config,
-                mediaicon_config=self.__mediaicon_config,
-                screen=self.__screen
+                mounticon_config=self.__mounticon_config,
+                screen=self.__screen,
+                host_manager=HostManager(),
             )
         )
 
@@ -64,15 +66,15 @@ class MediaTrayMain(Main):
             )
 
         if self.__o_pin.has_changed:
-            self.__mediaicon_config.pin = self.__o_pin.int_value
+            self.__mounticon_config.pin = self.__o_pin.int_value
 
         if self.__o_pin_x.has_changed:
-            self.__mediaicon_config.pin_x = self.__o_pin_x.int_value
+            self.__mounticon_config.pin_x = self.__o_pin_x.int_value
 
         if self.__o_pin_y.has_changed:
-            self.__mediaicon_config.pin_y = self.__o_pin_y.int_value
+            self.__mounticon_config.pin_y = self.__o_pin_y.int_value
 
         if self.__o_automount.has_changed:
-            self.__mediaicon_config.automount = self.__o_automount.int_value
+            self.__mounticon_config.automount = self.__o_automount.int_value
 
         Main.options_changed(self)
