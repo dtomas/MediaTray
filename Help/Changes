@@ -4,6 +4,7 @@
 
 0.1.2 (unreleased)
 ~~~~~
+Make an icon without visible windows draggable as text/uri-list.
 Fixed NameError in MediaIcon.uris_dropped().
 Fixed TypeError in manage_mediaicons(). (reported by Abrolag)
 Improved support for external (un)mounting.

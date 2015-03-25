@@ -308,9 +308,9 @@ class MediaIcon(WinIcon):
 
     def __drag_data_get(self, widget, context, data, info, time):
         """Called when the icon is dragged somewhere."""
-        if not self.visible_windows:
-            return
         if info == TARGET_WNCK_WINDOW_ID:
+            if not self.visible_windows:
+                return
             xid = self.visible_windows[0].get_xid()
             data.set(data.target, 8, apply(struct.pack, ['1i', xid]))
         else:
