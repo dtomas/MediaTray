@@ -79,11 +79,6 @@ class MediaIcon(MountIcon):
 
         mount = self.__volume.get_mount()
 
-        self.__unmounted_handler = (
-            mount.connect("unmounted", self.__unmounted) if mount is not None
-            else None
-        )
-
     def get_mount(self):
         return self.__volume.get_mount()
 
@@ -98,10 +93,6 @@ class MediaIcon(MountIcon):
             # Should never happen, but anyway...
             return None
         return root.get_path()
-
-    @property
-    def is_mounted(self):
-        return self.__volume.get_mount() is not None
 
 
     # Actions
@@ -121,34 +112,11 @@ class MediaIcon(MountIcon):
                 on_mount()
         self.__volume.mount(gtk.MountOperation(), mounted)
 
-    def _unmount(self):
-        """Unmount the volume."""
-        mount = self.__volume.get_mount()
-
-        def unmounted(mount, result):
-            mount.unmount_finish(result)
-        mount.unmount(unmounted)
-
     def eject(self):
         """Eject the volume."""
         def ejected(volume, result):
             self.__volume.eject_finish(result)
         self.__volume.eject(ejected)
-
-
-    # Signal handlers
-
-    def mounted(self):
-        """Called when the volume has been mounted."""
-        MountIcon.mounted(self)
-        self.__unmounted_handler = self.__volume.get_mount().connect(
-            "unmounted", self.__unmounted
-        )
-
-    def __unmounted(self, mount):
-        self.unmounted(mount.get_root().get_path())
-        mount.disconnect(self.__unmounted_handler)
-        self.__unmounted_handler = None
 
 
     # Icon handling

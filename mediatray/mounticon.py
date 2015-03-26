@@ -89,6 +89,13 @@ class MountIcon(WinIcon):
 
         self.__set_icon(self.get_icon_path())
 
+        mount = self.get_mount()
+        self.__is_mounted = mount is not None
+
+        self.__unmounted_handler = mount.connect(
+            "unmounted", self.__unmounted
+        ) if mount is not None else None
+
         self.update_visibility()
         self.update_icon()
         self.update_name()
@@ -98,6 +105,9 @@ class MountIcon(WinIcon):
 
         self.add_to_pinboard()
 
+    def get_mount(self):
+        raise NotImplementedError
+
     @property
     def mountpoint(self):
         """The volume's mount point or C{None} if the volume is not mounted."""
@@ -105,7 +115,7 @@ class MountIcon(WinIcon):
 
     @property
     def is_mounted(self):
-        raise NotImplementedError
+        return self.__is_mounted
 
 
     # Actions
@@ -114,7 +124,11 @@ class MountIcon(WinIcon):
         raise NotImplementedError
 
     def _unmount(self):
-        raise NotImplementedError
+        mount = self.get_mount()
+
+        def unmounted(mount, result):
+            mount.unmount_finish(result)
+        mount.unmount(unmounted)
 
     def mount(self, on_mount=None):
         """
@@ -242,10 +256,20 @@ class MountIcon(WinIcon):
 
     def mounted(self):
         """Called when the volume has been mounted."""
+        self.__is_mounted = True
         self.update_icon()
         self.update_emblem()
         self.__set_icon(self.get_icon_path())
         self.add_to_pinboard()
+        self.__unmounted_handler = self.get_mount().connect(
+            "unmounted", self.__unmounted
+        )
+
+    def __unmounted(self, mount):
+        self.__is_mounted = False
+        self.unmounted(mount.get_root().get_path())
+        mount.disconnect(self.__unmounted_handler)
+        self.__unmounted_handler = None
 
     def unmounted(self, mountpoint):
         """Called when the volume has been unmounted."""
