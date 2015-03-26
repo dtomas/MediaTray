@@ -6,11 +6,14 @@ import gobject
 
 class AddHostWindow(gtk.Dialog):
     
-    def __init__(self, host_manager):
-        gtk.Dialog.__init__(self, _("Add Host"), 
+    def __init__(self, host_manager, host=None):
+        gtk.Dialog.__init__(self,
+                            _("Add Host") if host is None else _("Edit host"), 
                             buttons = (gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT,
-                                       gtk.STOCK_ADD, gtk.RESPONSE_ACCEPT))
+                                       gtk.STOCK_SAVE if host is not None
+                                       else gtk.STOCK_ADD, gtk.RESPONSE_ACCEPT))
         self.__host_manager = host_manager
+        self.__host = host
 
 
         table = gtk.Table()
@@ -36,6 +39,19 @@ class AddHostWindow(gtk.Dialog):
         self.__path_input = gtk.Entry()
         self.__port_select = gtk.SpinButton(gtk.Adjustment(0, 0, 65534, 1), 1)
 
+        if self.__host is not None:
+            self.__hostname_input.set_text(self.__host.hostname)
+            self.__username_input.set_text(self.__host.username)
+            self.__path_input.set_text(self.__host.path)
+            self.__port_select.set_value(self.__host.port)
+            iter = self.__protocols_model.get_iter_first()
+            while iter:
+                protocol = self.__protocols_model.get_value(iter, 1)
+                if protocol == self.__host.protocol:
+                    self.__protocol_select.set_active_iter(iter)
+                    break
+                iter = self.__protocols_model.iter_next(iter)
+
         table.attach(gtk.Label(_("Protocol")), 0, 1, 0, 1)
         table.attach(gtk.Label(_("Hostname")), 0, 1, 1, 2)
         table.attach(gtk.Label(_("Username")), 0, 1, 2, 3)
@@ -53,15 +69,19 @@ class AddHostWindow(gtk.Dialog):
                 column = self.__protocol_select.get_property("active")
                 iter = self.__protocols_model.get_iter((column,))
                 protocol = self.__protocols_model.get(iter, 1)[0]
+                username = self.__username_input.get_text()
                 port = self.__port_select.get_value()
-                uri = '{protocol}://{username}@{hostname}{port}/{path}'.format(
+                uri = '{protocol}://{username}{hostname}{port}/{path}'.format(
                     protocol=protocol,
-                    username=self.__username_input.get_text(),
+                    username='%s@' % username if username else '',
                     hostname=self.__hostname_input.get_text(),
-                    path=self.__path_input.get_text(),
+                    path=self.__path_input.get_text().lstrip('/'),
                     port=':%s' % port if port != 0 else '',
                 )
-                self.__host_manager.add_host(uri)
+                if self.__host is not None:
+                    self.__host_manager.update_host(self.__host.uri, uri)
+                else:
+                    self.__host_manager.add_host(uri)
             dialog.destroy()
         self.connect("response", response)
         self.show_all()

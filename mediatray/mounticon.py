@@ -123,11 +123,14 @@ class MountIcon(WinIcon):
     def _mount(self, on_mount=None):
         raise NotImplementedError
 
-    def _unmount(self):
+    def _unmount(self, on_unmount=None):
         mount = self.get_mount()
 
         def unmounted(mount, result):
-            mount.unmount_finish(result)
+            if not mount.unmount_finish(result):
+                return
+            if on_unmount:
+                on_unmount()
         mount.unmount(unmounted)
 
     def mount(self, on_mount=None):
@@ -142,7 +145,7 @@ class MountIcon(WinIcon):
             return
         self._mount(on_mount=on_mount)
 
-    def unmount(self):
+    def unmount(self, on_unmount=None):
         """Unmount the volume."""
         if not self.is_mounted:
             # Already unmounted.
@@ -156,7 +159,7 @@ class MountIcon(WinIcon):
                 closed_windows.add(window)
                 if closed_windows.intersection(windows) == windows:
                     self.screen.disconnect(window_closed_handler)
-                    self._unmount()
+                    self._unmount(on_unmount=on_unmount)
 
             window_closed_handler = self.screen.connect(
                 "window-closed", window_closed
@@ -164,7 +167,7 @@ class MountIcon(WinIcon):
             for window in self.windows:
                 window.close(0)
         else:
-            self._unmount()
+            self._unmount(on_unmount=on_unmount)
 
     def open(self):
         """Open the volume's mount point in ROX-Filer."""

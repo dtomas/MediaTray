@@ -18,7 +18,8 @@ def manage_hosticons(tray, host_manager, icon_config, win_config,
 
     def host_added(host_manager, host, initial=False):
         icon = HostIcon(
-            icon_config, win_config, mounticon_config, screen, host
+            icon_config, win_config, mounticon_config, screen, host_manager,
+            host
         )
         tray.add_icon("Hosts", host, icon)
         if not initial:
