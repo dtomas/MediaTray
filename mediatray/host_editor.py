@@ -8,7 +8,7 @@ class HostEditor(gtk.Dialog):
     
     def __init__(self, host_manager, host=None):
         gtk.Dialog.__init__(self,
-                            _("Add Host") if host is None else _("Edit host"), 
+                            _("Add Host") if host is None else _("Edit Host"), 
                             buttons = (gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT,
                                        gtk.STOCK_SAVE if host is not None
                                        else gtk.STOCK_ADD, gtk.RESPONSE_ACCEPT))

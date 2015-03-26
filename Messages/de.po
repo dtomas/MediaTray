@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2015-03-25 22:21+CET\n"
+"POT-Creation-Date: 2015-03-26 10:01+CET\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,33 +15,53 @@ msgstr ""
 "Content-Transfer-Encoding: UTF-8\n"
 "Generated-By: pygettext.py 1.5\n"
 
-#: mediatray/add_host_window.py:10 mediatray/main_icon.py:41
+#: mediatray/host_editor.py:11
+msgid "Edit Host"
+msgstr "Server bearbeiten"
+
+#: mediatray/host_editor.py:11 mediatray/main_icon.py:41
 msgid "Add Host"
 msgstr "Server hinzufügen"
 
-#: mediatray/add_host_window.py:38
+#: mediatray/host_editor.py:60
 msgid "Protocol"
 msgstr "Protokoll"
 
-#: mediatray/add_host_window.py:39
+#: mediatray/host_editor.py:62
 msgid "Hostname"
 msgstr "Servername"
 
-#: mediatray/add_host_window.py:40
+#: mediatray/host_editor.py:63
 msgid "Username"
 msgstr "Benutzername"
 
-#: mediatray/add_host_window.py:41
+#: mediatray/host_editor.py:64
+msgid "Port"
+msgstr ""
+
+#: mediatray/host_editor.py:65
 msgid "Path"
 msgstr "Pfad"
 
-#: mediatray/hosticon.py:29
+#: mediatray/host_editor.py:85
+msgid "You must enter a hostname."
+msgstr "Bitte geben Sie den Servernamen ein."
+
+#: mediatray/host_editor.py:94
+msgid "You must select a protocol."
+msgstr "Bitte wählen Sie ein Protokoll."
+
+#: mediatray/hosticon.py:22
 msgid "Connect"
 msgstr "Verbinden"
 
-#: mediatray/hosticon.py:30
+#: mediatray/hosticon.py:23
 msgid "Disconnect"
 msgstr "Trennen"
+
+#: mediatray/hosticon.py:77
+msgid "Really remove host %s?"
+msgstr "Server %s wirklich entfernen?"
 
 #: mediatray/main_icon.py:51
 msgid "Scroll down to only show windows of this workspace."
@@ -59,11 +79,11 @@ msgstr "Einhängen"
 msgid "Unmount"
 msgstr "Aushängen"
 
-#: mediatray/mediaicon.py:235
+#: mediatray/mediaicon.py:193
 msgid "Eject"
 msgstr "Auswerfen"
 
-#: mediatray/mounticon.py:419
+#: mediatray/mounticon.py:454
 msgid "Open in terminal"
 msgstr "Im Terminal öffnen"
 
