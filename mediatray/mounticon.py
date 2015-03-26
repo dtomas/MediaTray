@@ -109,9 +109,15 @@ class MountIcon(WinIcon):
         raise NotImplementedError
 
     @property
-    def mountpoint(self):
-        """The volume's mount point or C{None} if the volume is not mounted."""
-        raise NotImplementedError
+    def path(self):
+        try:
+            return self.__path
+        except AttributeError:
+            path = self.make_path()
+            if path is None:
+                return None
+            self.__path = path
+            return path
 
     @property
     def is_mounted(self):
@@ -173,7 +179,8 @@ class MountIcon(WinIcon):
         """Open the volume's mount point in ROX-Filer."""
 
         def open():
-            filer.open_dir(self.mountpoint)
+            print("opening %s" % self.path)
+            filer.open_dir(self.path)
 
         if not self.is_mounted:
             self.mount(on_mount=open)
@@ -189,7 +196,7 @@ class MountIcon(WinIcon):
         def open():
             terminal_cmd = o_terminal.value.split()
             cwd = os.getcwd()
-            os.chdir(self.mountpoint)
+            os.chdir(self.path)
             processes.PipeThroughCommand(terminal_cmd, None, None).start()
             os.chdir(cwd)
 
@@ -208,7 +215,7 @@ class MountIcon(WinIcon):
                 action = filer.rpc.Copy
             action(
                 From={'File': [rox.get_local_path(uri) for uri in uri_list]},
-                To={'File': self.mountpoint}
+                To={'File': self.path}
             )
 
         if not self.is_mounted:
@@ -224,16 +231,16 @@ class MountIcon(WinIcon):
         if self.__mediaicon_config.pin:
             self.add_to_pinboard()
         else:
-            self.remove_from_pinboard(self.mountpoint)
+            self.remove_from_pinboard(self.path)
 
     def update_option_pin_x(self):
         """Called when the pin_x option has changed."""
-        self.remove_from_pinboard(self.mountpoint)
+        self.remove_from_pinboard(self.path)
         self.add_to_pinboard()
 
     def update_option_pin_y(self):
         """Called when the pin_y option has changed."""
-        self.remove_from_pinboard(self.mountpoint)
+        self.remove_from_pinboard(self.path)
         self.add_to_pinboard()
 
 
@@ -249,13 +256,13 @@ class MountIcon(WinIcon):
         else:
             if not self.is_mounted:
                 return
-            data.set_uris(['file://' + self.mountpoint])
+            data.set_uris(['file://' + self.path])
 
-    def removed(self, mountpoint):
+    def removed(self, path):
         """Called when the mountable has been removed."""
         for window in self.windows:
             window.close(0)
-        self.remove_from_pinboard(mountpoint)
+        self.remove_from_pinboard(path)
 
     def mounted(self):
         """Called when the volume has been mounted."""
@@ -270,14 +277,14 @@ class MountIcon(WinIcon):
 
     def __unmounted(self, mount):
         self.__is_mounted = False
-        self.unmounted(mount.get_root().get_path())
+        self.unmounted(self.path)
         mount.disconnect(self.__unmounted_handler)
         self.__unmounted_handler = None
 
-    def unmounted(self, mountpoint):
+    def unmounted(self, path):
         """Called when the volume has been unmounted."""
         self.update_emblem()
-        self.removed(mountpoint)
+        self.removed(path)
 
 
     # Pinboard
@@ -292,18 +299,18 @@ class MountIcon(WinIcon):
             return
         if not self.mounticon_config.pin:
             return
-        root_path = self.mountpoint
-        if root_path is None:
+        path = self.path
+        if path is None:
             return
         filer.rpc.PinboardAdd(
-            Path=root_path,
+            Path=path,
             Label=self.name,
             X=self.mounticon_config.pin_x,
             Y=self.mounticon_config.pin_y,
             Update=1,
         )
-        if root_path not in volumes_on_pinboard:
-            volumes_on_pinboard.append(root_path)
+        if path not in volumes_on_pinboard:
+            volumes_on_pinboard.append(path)
             f = open(_volumes_on_pinboard_path, 'w')
             try:
                 json.dump(volumes_on_pinboard, f)
@@ -311,12 +318,12 @@ class MountIcon(WinIcon):
                 f.close()
         self.__is_on_pinboard = True
 
-    def remove_from_pinboard(self, mountpoint, unset_icon=False):
+    def remove_from_pinboard(self, path, unset_icon=False):
         """Remove the volume from the pinboard."""
-        filer.rpc.PinboardRemove(Path=mountpoint)
-        filer.rpc.UnsetIcon(Path=mountpoint)
-        if mountpoint in volumes_on_pinboard:
-            volumes_on_pinboard.remove(mountpoint)
+        filer.rpc.PinboardRemove(Path=path)
+        filer.rpc.UnsetIcon(Path=path)
+        if path in volumes_on_pinboard:
+            volumes_on_pinboard.remove(path)
             f = open(_volumes_on_pinboard_path, 'w')
             try:
                 json.dump(volumes_on_pinboard, f)
@@ -331,19 +338,19 @@ class MountIcon(WinIcon):
         """Set the icon to use for the mount point in ROX-Filer."""
         if icon_path is None:
             return
-        root_path = self.mountpoint
-        if root_path is None:
+        path = self.path
+        if path is None:
             return
-        filer.rpc.SetIcon(Path=root_path, Icon=icon_path)
+        filer.rpc.SetIcon(Path=path, Icon=icon_path)
 
     def get_individual_icon_path(self):
         """Get the path of the .DirIcon."""
-        root_path = self.mountpoint
-        if root_path is None:
+        path = self.path
+        if path is None:
             return None
 
         # Try to read diricon.
-        icon_path = os.path.join(root_path, '.DirIcon')
+        icon_path = os.path.join(path, '.DirIcon')
         if os.access(icon_path, os.R_OK):
             return icon_path
 
@@ -369,8 +376,10 @@ class MountIcon(WinIcon):
 
         Recognizes ROX-Filer as well as Terminal windows.
         """
-        root_path = self.mountpoint
+        root_path = self.path
         if root_path is None:
+            return False
+        if not os.path.isdir(root_path):
             return False
         class_group = window.get_class_group().get_name()
         path = os.path.expanduser(get_filer_window_path(window))
@@ -383,8 +392,7 @@ class MountIcon(WinIcon):
             return False
         return (
             path == root_path or
-                os.path.isdir(path) and
-                os.stat(root_path).st_dev == os.stat(path).st_dev
+                os.path.isdir(path) and path.startswith(root_path + os.sep)
         )
 
     def menu_has_kill(self):

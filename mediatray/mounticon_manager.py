@@ -26,7 +26,7 @@ def manage_mounticons(tray, mounticon_config):
         for icon in tray.icons:
             if not icon.is_mounted:
                 continue
-            icon.remove_from_pinboard(icon.mountpoint)
+            icon.remove_from_pinboard(icon.path)
         yield None
 
     return manage, unmanage

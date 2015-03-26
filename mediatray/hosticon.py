@@ -40,8 +40,7 @@ class HostIcon(MountIcon):
         except gio.Error:
             return None
 
-    @property
-    def mountpoint(self):
+    def make_path(self):
         return self.__file.get_path()
 
     def _mount(self, on_mount=None):

@@ -82,8 +82,7 @@ class MediaIcon(MountIcon):
     def get_mount(self):
         return self.__volume.get_mount()
 
-    @property
-    def mountpoint(self):
+    def make_path(self):
         """The volume's mount point or C{None} if the volume is not mounted."""
         mount = self.__volume.get_mount()
         if mount is None:
@@ -121,15 +120,6 @@ class MediaIcon(MountIcon):
 
     # Icon handling
 
-    def __set_icon(self, icon_path):
-        """Set the icon to use for the mount point in ROX-Filer."""
-        if icon_path is None:
-            return
-        root_path = self.mountpoint
-        if root_path is None:
-            return
-        filer.rpc.SetIcon(Path=root_path, Icon=icon_path)
-
     def get_individual_icon_path(self):
         """
         Get the path of the .DirIcon or an icon defined in Windows'
@@ -158,14 +148,14 @@ class MediaIcon(MountIcon):
 
     def __read_windows_autorun(self):
         """Read path to icon and executable from Windows' autorun.inf."""
-        root_path = self.mountpoint
-        if root_path is None:
+        path = self.path
+        if path is None:
             return None
 
-        path = os.path.join(root_path, 'autorun.inf')
+        autorun_path = os.path.join(path, 'autorun.inf')
         parser = RawConfigParser()
 
-        if parser.read(path) != [path]:
+        if parser.read(autorun_path) != [path]:
             return
 
         windows_autorun = WindowsAutoRun()
