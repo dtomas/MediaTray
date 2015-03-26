@@ -63,17 +63,23 @@ class HostIcon(MountIcon):
 
         menu.append(gtk.SeparatorMenuItem())
 
-        def edit():
+        def edit(menu_item):
             HostEditor(self.__host_manager, self.__host).show()
 
         menu_item = gtk.ImageMenuItem(gtk.STOCK_EDIT)
-        menu_item.connect("activate", lambda menu_item: edit())
+        menu_item.connect("activate", edit)
         menu.append(menu_item)
 
         menu.append(gtk.SeparatorMenuItem())
 
+        def remove(menu_item):
+            if rox.confirm(
+                    _("Really remove host %s?") % self.__host.name,
+                    gtk.STOCK_REMOVE):
+                self.__host.remove()
+
         menu_item = gtk.ImageMenuItem(gtk.STOCK_REMOVE)
-        menu_item.connect("activate", lambda menu_item: self.__host.remove())
+        menu_item.connect("activate", remove)
         menu.append(menu_item)
 
         return menu
