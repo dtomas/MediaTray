@@ -4,7 +4,7 @@ import gtk
 import gobject
 
 
-class AddHostWindow(gtk.Dialog):
+class HostEditor(gtk.Dialog):
     
     def __init__(self, host_manager, host=None):
         gtk.Dialog.__init__(self,

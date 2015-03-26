@@ -7,7 +7,7 @@ import gtk
 from traylib import *
 from traylib.menu_icon import MenuIcon
 
-from mediatray.add_host_window import AddHostWindow
+from mediatray.host_editor import HostEditor
 
 
 ICON_THEME.append_search_path(os.path.join(rox.app_dir, 'icons'))
@@ -43,7 +43,7 @@ class MainIcon(MenuIcon):
         return [menu_item]
 
     def __add_host(self, menu_item):
-        dialog = AddHostWindow(self.__host_manager)
+        dialog = HostEditor(self.__host_manager)
         dialog.show()
 
     def make_tooltip(self):

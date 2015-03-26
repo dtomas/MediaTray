@@ -6,7 +6,7 @@ import gtk
 import rox
 
 from mediatray.mounticon import MountIcon
-from mediatray.add_host_window import AddHostWindow
+from mediatray.host_editor import HostEditor
 
 
 class HostIcon(MountIcon):
@@ -65,8 +65,7 @@ class HostIcon(MountIcon):
         menu.append(gtk.SeparatorMenuItem())
 
         def edit():
-            print("edit")
-            AddHostWindow(self.__host_manager, self.__host).show()
+            HostEditor(self.__host_manager, self.__host).show()
 
         menu_item = gtk.ImageMenuItem(gtk.STOCK_EDIT)
         menu_item.connect("activate", lambda menu_item: edit())
