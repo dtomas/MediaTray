@@ -73,8 +73,7 @@ class MediaIcon(MountIcon):
         self.mount_label = _("Mount")
         self.unmount_label = _("Unmount")
         self.__volume.connect(
-            "removed",
-            lambda volume, mount: self.removed(mount.get_root().get_path())
+            "removed", lambda volume: self.removed(self.path)
         )
 
         mount = self.__volume.get_mount()
