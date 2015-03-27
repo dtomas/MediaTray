@@ -1,6 +1,6 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR ORGANIZATION
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# MediaTray Applet.
+# Copyright (C) 2015 Dennis Tomas
+# Dennis Tomas <den.t@gmx.de>, 2015.
 #
 msgid ""
 msgstr ""
