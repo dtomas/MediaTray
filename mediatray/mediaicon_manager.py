@@ -57,7 +57,7 @@ def manage_mediaicons(tray, screen, icon_config, win_config, mounticon_config):
             return
         if not icon.is_mounted:
             processes.PipeThroughCommand([
-                "notify-send", "--icon=gtk-remove",
+                "notify-send", "--icon=%s" % icon.find_icon_name(),
                 _("Volume \"%s\" has been removed.") % volume.get_name()
             ], None, None).start()
         else:
