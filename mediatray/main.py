@@ -26,6 +26,7 @@ class MediaTrayMain(Main):
         self.__o_pin_x = Option("pin_x", PIN_LEFT)
         self.__o_pin_y = Option("pin_y", PIN_TOP)
         self.__o_automount = Option("automount", 0)
+        self.__o_show_notifications = Option("show_notifications", True)
  
     def init_config(self):
         Main.init_config(self)
@@ -38,6 +39,7 @@ class MediaTrayMain(Main):
             pin_x=self.__o_pin_x.int_value,
             pin_y=self.__o_pin_y.int_value,
             automount=self.__o_automount.int_value,
+            show_notifications=self.__o_show_notifications,
         )
 
         # MediaTray doesn't use the 'hidden' option, so make sure no icons get
@@ -76,5 +78,10 @@ class MediaTrayMain(Main):
 
         if self.__o_automount.has_changed:
             self.__mounticon_config.automount = self.__o_automount.int_value
+
+        if self.__o_show_notifications.has_changed:
+            self.__mounticon_config.show_notifications = bool(
+                self.__o_show_notifications.int_value
+            )
 
         Main.options_changed(self)

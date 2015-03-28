@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2015-03-26 10:01+CET\n"
+"POT-Creation-Date: 2015-03-28 14:35+CET\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -79,11 +79,31 @@ msgstr ""
 msgid "Unmount"
 msgstr ""
 
-#: mediatray/mediaicon.py:193
+#: mediatray/mediaicon.py:192
 msgid "Eject"
 msgstr ""
 
-#: mediatray/mounticon.py:454
+#: mediatray/mediaicon_manager.py:46
+msgid "Volume \"%s\" has been inserted."
+msgstr ""
+
+#: mediatray/mediaicon_manager.py:61
+msgid "Volume \"%s\" has been removed."
+msgstr ""
+
+#: mediatray/mediaicon_manager.py:66
+msgid "Volume \"%s\" has been removed without unmounting. Please do always unmount a volume before removing it."
+msgstr ""
+
+#: mediatray/mediaicon_manager.py:92
+msgid "Volume \"%s\" has been mounted."
+msgstr ""
+
+#: mediatray/mediaicon_manager.py:106
+msgid "Volume \"%s\" has been unmounted and can now be safely removed."
+msgstr ""
+
+#: mediatray/mounticon.py:461
 msgid "Open in terminal"
 msgstr ""
 
@@ -161,5 +181,13 @@ msgstr ""
 
 #: tipsH:23 tipsV:23
 msgid "Open volume when inserted"
+msgstr ""
+
+#: tipsH:24 tipsV:24
+msgid "Notifications"
+msgstr ""
+
+#: tipsH:25 tipsV:25
+msgid "Show notifications about added/removed volumes."
 msgstr ""
 

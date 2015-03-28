@@ -2,6 +2,10 @@
 			Shows removable media
 			by Dennis Tomas
 
+0.2.1
+~~~~~
+Notification about added/removed/mounted/unmounted volumes.
+
 0.2
 ~~~
 Adding hosts.

@@ -33,3 +33,8 @@ class MountIconConfig(Config):
     C{AUTOMOUNT} to mount added volumes automatically.
     C{AUTOOPEN} to open added volumes automatically.
     """
+
+    show_notifications = Attribute()
+    """
+    C{True} if notifications about added/removed volumes should be displayed.
+    """
