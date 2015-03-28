@@ -6,7 +6,7 @@
 ~~~
 Adding hosts.
 
-0.1.2 (unreleased)
+0.1.2
 ~~~~~
 Make an icon without visible windows draggable as text/uri-list.
 Fixed NameError in MediaIcon.uris_dropped().
