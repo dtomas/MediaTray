@@ -158,6 +158,9 @@ class MediaIcon(WinIcon):
 
         self.add_to_pinboard()
 
+    def get_mount(self):
+        return self.__volume.get_mount()
+
     @property
     def mountpoint(self):
         """The volume's mount point or C{None} if the volume is not mounted."""

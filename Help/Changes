@@ -2,7 +2,19 @@
 			Shows removable media
 			by Dennis Tomas
 
+<<<<<<< HEAD
 0.1.2
+=======
+0.2.1
+~~~~~
+Notification about added/removed/mounted/unmounted volumes.
+
+0.2
+~~~
+Adding hosts.
+
+0.1.2 (unreleased)
+>>>>>>> 3d46aad... Notifications about added/removed/mounted/unmounted volumes.
 ~~~~~
 Make an icon without visible windows draggable as text/uri-list.
 Fixed NameError in MediaIcon.uris_dropped().
