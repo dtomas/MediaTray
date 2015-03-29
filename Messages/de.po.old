@@ -1,11 +1,11 @@
-# MediaTray Applet.
-# Copyright (C) 2015 Dennis Tomas
-# Dennis Tomas <den.t@gmx.de>, 2015.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2015-03-28 14:35+CET\n"
+"POT-Creation-Date: 2015-03-26 10:01+CET\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,8 +16,8 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 
 #: mediatray/host_editor.py:11
-msgid "Edit Host"
-msgstr "Server bearbeiten"
+msgid "Edit host"
+msgstr ""
 
 #: mediatray/host_editor.py:11 mediatray/main_icon.py:41
 msgid "Add Host"
@@ -45,11 +45,11 @@ msgstr "Pfad"
 
 #: mediatray/host_editor.py:85
 msgid "You must enter a hostname."
-msgstr "Bitte geben Sie den Servernamen ein."
+msgstr ""
 
 #: mediatray/host_editor.py:94
 msgid "You must select a protocol."
-msgstr "Bitte wählen Sie ein Protokoll."
+msgstr ""
 
 #: mediatray/hosticon.py:22
 msgid "Connect"
@@ -61,7 +61,7 @@ msgstr "Trennen"
 
 #: mediatray/hosticon.py:77
 msgid "Really remove host %s?"
-msgstr "Server %s wirklich entfernen?"
+msgstr ""
 
 #: mediatray/main_icon.py:51
 msgid "Scroll down to only show windows of this workspace."
@@ -79,36 +79,11 @@ msgstr "Einhängen"
 msgid "Unmount"
 msgstr "Aushängen"
 
-#: mediatray/mediaicon.py:192
+#: mediatray/mediaicon.py:193
 msgid "Eject"
 msgstr "Auswerfen"
 
-#: mediatray/mediaicon_manager.py:46
-msgid "Volume \"%s\" has been inserted."
-msgstr "Der Datenträger \"%s\" wurde eingelegt."
-
-#: mediatray/mediaicon_manager.py:61
-msgid "Volume \"%s\" has been removed."
-msgstr "Der Datenträger \"%s\" wurde entfernt."
-
-#: mediatray/mediaicon_manager.py:66
-msgid ""
-"Volume \"%s\" has been removed without unmounting. Please do always unmount "
-"a volume before removing it."
-msgstr ""
-"Der Datenträger \"%s\" wurde entfernt, ohne vorher ausgehängt zu werden. "
-"Bitte hängen Sie einen Datenträger immer aus, bevor Sie ihn entfernen."
-
-#: mediatray/mediaicon_manager.py:92
-msgid "Volume \"%s\" has been mounted."
-msgstr "Der Datenträger \"%s\" wurde eingehängt."
-
-#: mediatray/mediaicon_manager.py:106
-msgid "Volume \"%s\" has been unmounted and can now be safely removed."
-msgstr ""
-"Der Datenträger \"%s\" wurde ausgehängt und kann nun sicher entfernt werden."
-
-#: mediatray/mounticon.py:461
+#: mediatray/mounticon.py:454
 msgid "Open in terminal"
 msgstr "Im Terminal öffnen"
 
@@ -187,11 +162,3 @@ msgstr "Eingelegten Datenträger einhängen"
 #: tipsH:23 tipsV:23
 msgid "Open volume when inserted"
 msgstr "Eingelegten Datenträger öffnen"
-
-#: tipsH:24 tipsV:24
-msgid "Notifications"
-msgstr "Benachrichtigungen"
-
-#: tipsH:25 tipsV:25
-msgid "Show notifications about added/removed volumes."
-msgstr "Benachrichtigungen über eingelegte/entfernte Datenträger anzeigen."

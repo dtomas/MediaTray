@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2015-03-21 09:27+CET\n"
+"POT-Creation-Date: 2015-03-28 14:35+CET\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,27 +15,95 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 
 
-#: mediatray/main_icon.py:33
+#: mediatray/host_editor.py:11
+msgid "Edit Host"
+msgstr ""
+
+#: mediatray/host_editor.py:11 mediatray/main_icon.py:41
+msgid "Add Host"
+msgstr ""
+
+#: mediatray/host_editor.py:60
+msgid "Protocol"
+msgstr ""
+
+#: mediatray/host_editor.py:62
+msgid "Hostname"
+msgstr ""
+
+#: mediatray/host_editor.py:63
+msgid "Username"
+msgstr ""
+
+#: mediatray/host_editor.py:64
+msgid "Port"
+msgstr ""
+
+#: mediatray/host_editor.py:65
+msgid "Path"
+msgstr ""
+
+#: mediatray/host_editor.py:85
+msgid "You must enter a hostname."
+msgstr ""
+
+#: mediatray/host_editor.py:94
+msgid "You must select a protocol."
+msgstr ""
+
+#: mediatray/hosticon.py:22
+msgid "Connect"
+msgstr ""
+
+#: mediatray/hosticon.py:23
+msgid "Disconnect"
+msgstr ""
+
+#: mediatray/hosticon.py:77
+msgid "Really remove host %s?"
+msgstr ""
+
+#: mediatray/main_icon.py:51
 msgid "Scroll down to only show windows of this workspace."
 msgstr ""
 
-#: mediatray/main_icon.py:35
+#: mediatray/main_icon.py:53
 msgid "Scroll up to show windows of all workspaces."
 msgstr ""
 
-#: mediatray/mediaicon.py:559
-msgid "Eject"
-msgstr ""
-
-#: mediatray/mediaicon.py:570
-msgid "Unmount"
-msgstr ""
-
-#: mediatray/mediaicon.py:575
+#: mediatray/mediaicon.py:73
 msgid "Mount"
 msgstr ""
 
-#: mediatray/mediaicon.py:582
+#: mediatray/mediaicon.py:74
+msgid "Unmount"
+msgstr ""
+
+#: mediatray/mediaicon.py:192
+msgid "Eject"
+msgstr ""
+
+#: mediatray/mediaicon_manager.py:46
+msgid "Volume \"%s\" has been inserted."
+msgstr ""
+
+#: mediatray/mediaicon_manager.py:61
+msgid "Volume \"%s\" has been removed."
+msgstr ""
+
+#: mediatray/mediaicon_manager.py:66
+msgid "Volume \"%s\" has been removed without unmounting. Please do always unmount a volume before removing it."
+msgstr ""
+
+#: mediatray/mediaicon_manager.py:92
+msgid "Volume \"%s\" has been mounted."
+msgstr ""
+
+#: mediatray/mediaicon_manager.py:106
+msgid "Volume \"%s\" has been unmounted and can now be safely removed."
+msgstr ""
+
+#: mediatray/mounticon.py:461
 msgid "Open in terminal"
 msgstr ""
 
@@ -113,5 +181,13 @@ msgstr ""
 
 #: tipsH:23 tipsV:23
 msgid "Open volume when inserted"
+msgstr ""
+
+#: tipsH:24 tipsV:24
+msgid "Notifications"
+msgstr ""
+
+#: tipsH:25 tipsV:25
+msgid "Show notifications about added/removed volumes."
 msgstr ""
 

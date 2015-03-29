@@ -1,7 +1,13 @@
-import rox, os
+import os
+
+import rox
+
+import gtk
 
 from traylib import *
 from traylib.menu_icon import MenuIcon
+
+from mediatray.host_editor import HostEditor
 
 
 ICON_THEME.append_search_path(os.path.join(rox.app_dir, 'icons'))
@@ -9,9 +15,11 @@ ICON_THEME.append_search_path(os.path.join(rox.app_dir, 'icons'))
 
 class MainIcon(MenuIcon):
 
-    def __init__(self, tray, icon_config, tray_config, win_config):
+    def __init__(self, tray, icon_config, tray_config, win_config,
+                 host_manager):
         MenuIcon.__init__(self, tray, icon_config, tray_config)
         win_config.add_configurable(self)
+        self.__host_manager = host_manager
 
     def update_option_all_workspaces(self):
         self.update_tooltip()
@@ -27,6 +35,16 @@ class MainIcon(MenuIcon):
 
     def get_icon_names(self):
         return ['computer']
+
+    #def get_custom_menu_items(self):
+    #    menu_item = gtk.ImageMenuItem(gtk.STOCK_ADD)
+    #    menu_item.set_label(_("Add Host"))
+    #    menu_item.connect("activate", self.__add_host)
+    #    return [menu_item]
+
+    def __add_host(self, menu_item):
+        dialog = HostEditor(self.__host_manager)
+        dialog.show()
 
     def make_tooltip(self):
         if self.tray.win_config.all_workspaces:

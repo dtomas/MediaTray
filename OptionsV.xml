@@ -49,5 +49,8 @@
             <radio label='Open volume when inserted' value='2'></radio>
         </radio-group>
     </frame>
+    <frame label='Notifications'>
+        <toggle name='show_notifications' label='Show notifications about added/removed volumes.'/>
+    </frame>
   </section>
 </options>

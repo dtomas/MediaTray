@@ -2,6 +2,10 @@
 			Shows removable media
 			by Dennis Tomas
 
+0.1.3 (unreleased)
+~~~~~
+Notification about added/removed/mounted/unmounted volumes.
+
 0.1.2
 ~~~~~
 Make an icon without visible windows draggable as text/uri-list.
