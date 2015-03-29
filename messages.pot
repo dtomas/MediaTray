@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2015-03-28 14:35+CET\n"
+"POT-Creation-Date: 2015-03-29 12:08+CEST\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,11 +16,11 @@ msgstr ""
 
 
 #: mediatray/host_editor.py:11
-msgid "Edit Host"
+msgid "Add Host"
 msgstr ""
 
-#: mediatray/host_editor.py:11 mediatray/main_icon.py:41
-msgid "Add Host"
+#: mediatray/host_editor.py:11
+msgid "Edit Host"
 msgstr ""
 
 #: mediatray/host_editor.py:60
@@ -79,32 +79,40 @@ msgstr ""
 msgid "Unmount"
 msgstr ""
 
-#: mediatray/mediaicon.py:192
+#: mediatray/mediaicon.py:197
 msgid "Eject"
 msgstr ""
 
-#: mediatray/mediaicon_manager.py:46
-msgid "Volume \"%s\" has been inserted."
+#: mediatray/mounticon.py:335
+msgid "Open in terminal"
 msgstr ""
 
-#: mediatray/mediaicon_manager.py:61
-msgid "Volume \"%s\" has been removed."
-msgstr ""
-
-#: mediatray/mediaicon_manager.py:66
-msgid "Volume \"%s\" has been removed without unmounting. Please do always unmount a volume before removing it."
-msgstr ""
-
-#: mediatray/mediaicon_manager.py:92
+#: mediatray/notification_manager.py:24
 msgid "Volume \"%s\" has been mounted."
 msgstr ""
 
-#: mediatray/mediaicon_manager.py:106
-msgid "Volume \"%s\" has been unmounted and can now be safely removed."
+#: mediatray/notification_manager.py:26
+msgid "Connected to host \"%s\"."
 msgstr ""
 
-#: mediatray/mounticon.py:461
-msgid "Open in terminal"
+#: mediatray/notification_manager.py:37
+msgid "Volume \"%s\" has been unmounted and can be safely removed."
+msgstr ""
+
+#: mediatray/notification_manager.py:41
+msgid "Disconnected from host \"%s\"."
+msgstr ""
+
+#: mediatray/notification_manager.py:54
+msgid "Volume \"%s\" has been inserted."
+msgstr ""
+
+#: mediatray/notification_manager.py:65
+msgid "Volume \"%s\" has been removed."
+msgstr ""
+
+#: mediatray/notification_manager.py:70
+msgid "Volume \"%s\" has been removed without unmounting. Please do always unmount a volume before removing it."
 msgstr ""
 
 #: tipsH:1 tipsV:1
