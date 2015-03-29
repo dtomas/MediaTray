@@ -11,13 +11,13 @@ from mediatray.host_editor import HostEditor
 
 class HostIcon(MountIcon):
 
-    def __init__(self, icon_config, win_config, mounticon_config, screen,
-                 host_manager, host):
+    def __init__(self, icon_config, win_config, screen, host_manager, host,
+                 volume_monitor):
         self.__host_manager = host_manager
         self.__host = host
         self.__file = gio.File(host.uri)
-        MountIcon.__init__(self, icon_config, win_config, mounticon_config,
-                           screen)
+        MountIcon.__init__(self, icon_config, win_config, screen,
+                           volume_monitor)
 
         self.mount_label = _("Connect")
         self.unmount_label = _("Disconnect")

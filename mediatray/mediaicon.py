@@ -64,17 +64,15 @@ def get_case_sensitive_path(path, root = '/'):
 
 class MediaIcon(MountIcon):
 
-    def __init__(self, icon_config, win_config, mounticon_config, volume,
-                 screen):
+    def __init__(self, icon_config, win_config, volume, screen,
+                 volume_monitor):
         self.__volume = volume
-        MountIcon.__init__(self, icon_config, win_config, mounticon_config,
-                           screen)
+        MountIcon.__init__(self, icon_config, win_config, screen,
+                           volume_monitor)
 
         self.mount_label = _("Mount")
         self.unmount_label = _("Unmount")
-        self.__volume.connect(
-            "removed", lambda volume: self.removed(self.path)
-        )
+        self.__volume.connect("removed", lambda volume: self.__removed())
 
         mount = self.__volume.get_mount()
 
@@ -91,6 +89,13 @@ class MediaIcon(MountIcon):
             # Should never happen, but anyway...
             return None
         return root.get_path()
+
+
+    # Signal handlers
+
+    def __removed(self):
+        for window in self.windows:
+            window.close(0)
 
 
     # Actions

@@ -1,5 +1,7 @@
 from functools import partial
 
+import gio
+
 import rox
 from rox.options import Option
 
@@ -8,7 +10,9 @@ from traylib.main import Main
 from traylib.winicon import WinIconConfig
 
 from mediatray import MediaTray
-from mediatray.mounticon_config import MountIconConfig, PIN_LEFT, PIN_TOP
+from mediatray.pinboard_config import PinboardConfig, PIN_LEFT, PIN_TOP
+from mediatray.automount_config import AutomountConfig, NO_AUTOMOUNT
+from mediatray.notification_config import NotificationConfig
 from mediatray.host_manager import HostManager
 
 
@@ -25,7 +29,7 @@ class MediaTrayMain(Main):
         self.__o_pin = Option("pin", True)
         self.__o_pin_x = Option("pin_x", PIN_LEFT)
         self.__o_pin_y = Option("pin_y", PIN_TOP)
-        self.__o_automount = Option("automount", 0)
+        self.__o_automount = Option("automount", NO_AUTOMOUNT)
         self.__o_show_notifications = Option("show_notifications", True)
  
     def init_config(self):
@@ -34,11 +38,15 @@ class MediaTrayMain(Main):
             all_workspaces=self.__o_all_workspaces.int_value,
             arrow=self.__o_arrow.int_value,
         )
-        self.__mounticon_config = MountIconConfig(
+        self.__pinboard_config = PinboardConfig(
             pin=self.__o_pin.int_value,
             pin_x=self.__o_pin_x.int_value,
             pin_y=self.__o_pin_y.int_value,
+        )
+        self.__automount_config = AutomountConfig(
             automount=self.__o_automount.int_value,
+        )
+        self.__notification_config = NotificationConfig(
             show_notifications=self.__o_show_notifications,
         )
 
@@ -52,9 +60,12 @@ class MediaTrayMain(Main):
             partial(
                 MediaTray,
                 win_config=self.__win_config,
-                mounticon_config=self.__mounticon_config,
+                pinboard_config=self.__pinboard_config,
+                automount_config=self.__automount_config,
+                notification_config=self.__notification_config,
                 screen=self.__screen,
                 host_manager=HostManager(),
+                volume_monitor=gio.volume_monitor_get(),
             )
         )
 
@@ -68,19 +79,19 @@ class MediaTrayMain(Main):
             )
 
         if self.__o_pin.has_changed:
-            self.__mounticon_config.pin = self.__o_pin.int_value
+            self.__pinboard_config.pin = self.__o_pin.int_value
 
         if self.__o_pin_x.has_changed:
-            self.__mounticon_config.pin_x = self.__o_pin_x.int_value
+            self.__pinboard_config.pin_x = self.__o_pin_x.int_value
 
         if self.__o_pin_y.has_changed:
-            self.__mounticon_config.pin_y = self.__o_pin_y.int_value
+            self.__pinboard_config.pin_y = self.__o_pin_y.int_value
 
         if self.__o_automount.has_changed:
-            self.__mounticon_config.automount = self.__o_automount.int_value
+            self.__automount_config.automount = self.__o_automount.int_value
 
         if self.__o_show_notifications.has_changed:
-            self.__mounticon_config.show_notifications = bool(
+            self.__notification_config.show_notifications = bool(
                 self.__o_show_notifications.int_value
             )
 

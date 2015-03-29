@@ -4,7 +4,7 @@ import struct
 import json
 
 import gtk
-
+import gobject
 import gio
 
 import rox
@@ -16,7 +16,6 @@ from traylib.winicon import WinIcon
 from traylib.winmenu import get_filer_window_path
 
 from mediatray.config import config_dir
-from mediatray.mounticon_config import AUTOMOUNT, AUTOOPEN
 
 
 icons_dir = os.path.join(rox.app_dir, 'icons')
@@ -29,39 +28,6 @@ emblem_rox_mount = gtk.gdk.pixbuf_new_from_file(
 )
 
 
-_volumes_on_pinboard_path = os.path.join(config_dir, 'volumes_on_pinboard')
-
-volumes_on_pinboard = []
-
-
-# remove non-existent volumes from pinboard
-try:
-    f = open(_volumes_on_pinboard_path, 'r')
-    try:
-        volumes_on_pinboard = json.load(f)
-    except ValueError:
-        # Unreadable file, remove it.
-        os.unlink(_volumes_on_pinboard_path)
-    finally:
-        f.close()
-except IOError:
-    pass
-
-
-for path in volumes_on_pinboard:
-    if not os.path.isdir(path):
-        filer.rpc.PinboardRemove(Path=path)
-        filer.rpc.UnsetIcon(Path=path)
-
-if volumes_on_pinboard:
-    volumes_on_pinboard = []
-    f = open(_volumes_on_pinboard_path, 'w')
-    try:
-        json.dump(volumes_on_pinboard, f)
-    finally:
-        f.close()
-
-
 filer_options = OptionGroup("ROX-Filer", "Options", "rox.sourceforge.net")
 o_terminal = Option("menu_xterm", "xterm", filer_options)
 
@@ -71,13 +37,8 @@ _terminal_title_re = re.compile(r'^.+\@.+\: (?P<path>.+)$')
 
 class MountIcon(WinIcon):
 
-    def __init__(self, icon_config, win_config, mounticon_config, screen):
+    def __init__(self, icon_config, win_config, screen, volume_monitor):
         WinIcon.__init__(self, icon_config, win_config, screen)
-
-        self.__mounticon_config = mounticon_config
-        mounticon_config.add_configurable(self)
-
-        self.__is_on_pinboard = False
 
         self.drag_source_set(
             gtk.gdk.BUTTON1_MASK, [
@@ -87,10 +48,10 @@ class MountIcon(WinIcon):
         )
         self.connect("drag-data-get", self.__drag_data_get)
 
-        self.__set_icon(self.get_icon_path())
-
         mount = self.get_mount()
         self.__is_mounted = mount is not None
+
+        volume_monitor.connect("mount-added", self.__mount_added)
 
         self.__unmounted_handler = mount.connect(
             "unmounted", self.__unmounted
@@ -102,8 +63,6 @@ class MountIcon(WinIcon):
         self.update_emblem()
         self.update_tooltip()
         self.update_is_drop_target()
-
-        self.add_to_pinboard()
 
     def get_mount(self):
         raise NotImplementedError
@@ -224,26 +183,6 @@ class MountIcon(WinIcon):
             copy(mount)
 
 
-    # Methods called when MediaIconConfig has changed.
-
-    def update_option_pin(self):
-        """Called when the pin option has changed."""
-        if self.__mediaicon_config.pin:
-            self.add_to_pinboard()
-        else:
-            self.remove_from_pinboard(self.path)
-
-    def update_option_pin_x(self):
-        """Called when the pin_x option has changed."""
-        self.remove_from_pinboard(self.path)
-        self.add_to_pinboard()
-
-    def update_option_pin_y(self):
-        """Called when the pin_y option has changed."""
-        self.remove_from_pinboard(self.path)
-        self.add_to_pinboard()
-
-
     # Signal handlers
 
     def __drag_data_get(self, widget, context, data, info, time):
@@ -258,90 +197,32 @@ class MountIcon(WinIcon):
                 return
             data.set_uris(['file://' + self.path])
 
-    def removed(self, path):
-        """Called when the mountable has been removed."""
-        for window in self.windows:
-            window.close(0)
-        self.remove_from_pinboard(path)
-
-    def mounted(self):
-        """Called when the volume has been mounted."""
+    def __mount_added(self, volume_manager, mount):
+        mountpoint = mount.get_root()
+        icon_mount = self.get_mount()
+        if icon_mount is None:
+            return
+        if icon_mount.get_root() != mountpoint:
+            return
         self.__is_mounted = True
         self.update_icon()
         self.update_emblem()
-        self.__set_icon(self.get_icon_path())
-        self.add_to_pinboard()
-        self.__unmounted_handler = self.get_mount().connect(
+        self.__unmounted_handler = mount.connect(
             "unmounted", self.__unmounted
         )
+        self.emit("mounted")
 
     def __unmounted(self, mount):
         self.__is_mounted = False
-        self.unmounted(self.path)
+        self.update_emblem()
+        for window in self.windows:
+            window.close(0)
         mount.disconnect(self.__unmounted_handler)
         self.__unmounted_handler = None
-
-    def unmounted(self, path):
-        """Called when the volume has been unmounted."""
-        self.update_emblem()
-        self.removed(path)
-
-
-    # Pinboard
-
-    def add_to_pinboard(self):
-        """
-        Add the volume to the pinboard.
-
-        Only works if the volume is mounted and the pin option is set.
-        """
-        if self.__is_on_pinboard:
-            return
-        if not self.mounticon_config.pin:
-            return
-        path = self.path
-        if path is None:
-            return
-        filer.rpc.PinboardAdd(
-            Path=path,
-            Label=self.name,
-            X=self.mounticon_config.pin_x,
-            Y=self.mounticon_config.pin_y,
-            Update=1,
-        )
-        if path not in volumes_on_pinboard:
-            volumes_on_pinboard.append(path)
-            f = open(_volumes_on_pinboard_path, 'w')
-            try:
-                json.dump(volumes_on_pinboard, f)
-            finally:
-                f.close()
-        self.__is_on_pinboard = True
-
-    def remove_from_pinboard(self, path, unset_icon=False):
-        """Remove the volume from the pinboard."""
-        filer.rpc.PinboardRemove(Path=path)
-        filer.rpc.UnsetIcon(Path=path)
-        if path in volumes_on_pinboard:
-            volumes_on_pinboard.remove(path)
-            f = open(_volumes_on_pinboard_path, 'w')
-            try:
-                json.dump(volumes_on_pinboard, f)
-            finally:
-                f.close()
-        self.__is_on_pinboard = False
+        self.emit("unmounted")
 
 
     # Icon handling
-
-    def __set_icon(self, icon_path):
-        """Set the icon to use for the mount point in ROX-Filer."""
-        if icon_path is None:
-            return
-        path = self.path
-        if path is None:
-            return
-        filer.rpc.SetIcon(Path=path, Icon=icon_path)
 
     def get_individual_icon_path(self):
         """Get the path of the .DirIcon."""
@@ -521,3 +402,11 @@ class MountIcon(WinIcon):
 
     mounticon_config = property(lambda self : self.__mounticon_config)
     """C{MediaIcon}-related configuration."""
+
+gobject.type_register(MountIcon)
+gobject.signal_new(
+    "mounted", MountIcon, gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ()
+)
+gobject.signal_new(
+    "unmounted", MountIcon, gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ()
+)
