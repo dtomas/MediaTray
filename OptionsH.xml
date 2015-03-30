@@ -1,29 +1,32 @@
 <?xml version='1.0'?>
 <options>
-  <section>
-    <frame label='Behaviour'>
-      <toggle name='all_workspaces' label='Show all workspaces'/>
-      <toggle name='arrow' label='Show arrow for volumes with more than one open window'/>
-    </frame>
-    <hbox>
-      <frame label='Separators'>
-        <toggle name='separator_left' label='Left'/>
-        <toggle name='separator_right' label='Right'/>
+    <section title='Layout'>
+      <hbox>
+        <frame label='Separators'>
+          <toggle name='separator_left' label='Left'/>
+          <toggle name='separator_right' label='Right'/>
+        </frame>
+        <frame label='Main Menu'>
+          <radio-group name='menus'>
+  	        <radio label='Left' value='1'/>
+            <radio label='Right' value='2'/>
+          </radio-group>
+        </frame>
+      </hbox>
+      <frame label='Size'>
+        <numentry name='icon_size_max' label='Maximum icon size:' min='16' max='96' step='8'/>
       </frame>
-      <frame label='Main Menu'>
-        <radio-group name='menus'>
-  	      <radio label='Left' value='1'/>
-          <radio label='Right' value='2'/>
-        </radio-group>
+      <frame label='Appearance'>
+        <toggle name='effects' label='Enable visual effects'/>
       </frame>
-    </hbox>
-    <frame label='Size'>
-      <numentry name='icon_size_max' label='Maximum icon size:' min='16' max='96' step='8'/>
-    </frame>
-    <frame label='Appearance'>
-      <toggle name='effects' label='Enable visual effects'/>
-    </frame>
-    <frame label='Pinboard Icons'>
+    </section>
+    <section title='Windows'>
+      <frame label='Behaviour'>
+        <toggle name='all_workspaces' label='Show all workspaces'/>
+        <toggle name='arrow' label='Show arrow for volumes with more than one open window'/>
+      </frame>
+    </section>
+    <section title='Pinboard Icons'>
       <vbox>
         <toggle label='Show icons on the pinboard' name='pin'/>
         <hbox>
@@ -41,16 +44,15 @@
           </vbox>
         </hbox>
       </vbox>
-    </frame>
-    <frame label='Automount'>
-        <radio-group name='automount'>
-            <radio label='No automatic mounting' value='0'></radio>
-            <radio label='Mount volume when inserted' value='1'></radio>
-            <radio label='Open volume when inserted' value='2'></radio>
-        </radio-group>
-    </frame>
-    <frame label='Notifications'>
-        <toggle name='show_notifications' label='Show notifications about added/removed volumes.'/>
-    </frame>
-  </section>
+    </section>
+    <section title='Automount'>
+      <radio-group name='automount'>
+          <radio label='No automatic mounting' value='0'></radio>
+          <radio label='Mount volume when inserted' value='1'></radio>
+          <radio label='Open volume when inserted' value='2'></radio>
+      </radio-group>
+    </section>
+    <section title='Notifications'>
+      <toggle name='show_notifications' label='Show notifications about added/removed volumes.'/>
+    </section>
 </options>
