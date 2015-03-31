@@ -24,15 +24,18 @@ class MediaTray(ManagedTray):
     """
 
     def __init__(self, icon_config, tray_config, win_config, pinboard_config,
-                 notification_config, automount_config, screen, host_manager,
-                 volume_monitor):
+                 notification_config, automount_config, mediaicon_config,
+                 screen, host_manager, volume_monitor):
         self.__win_config = win_config
         self.__screen = screen
         self.__icon_handlers = {}
         ManagedTray.__init__(
             self, icon_config, tray_config,
             create_menu_icon=partial(
-                MainIcon, win_config=win_config, host_manager=host_manager
+                MainIcon,
+                win_config=win_config,
+                mediaicon_config=mediaicon_config,
+                host_manager=host_manager,
             ),
             managers=[
                 partial(
@@ -44,6 +47,7 @@ class MediaTray(ManagedTray):
                     screen=screen,
                     icon_config=icon_config,
                     win_config=win_config,
+                    mediaicon_config=mediaicon_config,
                     volume_monitor=volume_monitor,
                 ),
                 #partial(
