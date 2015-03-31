@@ -45,12 +45,15 @@
         </hbox>
       </vbox>
     </section>
-    <section title='Automount'>
-      <radio-group name='automount'>
-          <radio label='No automatic mounting' value='0'></radio>
-          <radio label='Mount volume when inserted' value='1'></radio>
-          <radio label='Open volume when inserted' value='2'></radio>
-      </radio-group>
+    <section title='Volumes'>
+      <toggle label='Hide unmounted volumes' name='hide_unmounted'/>
+      <frame label='Automatic mounting'>
+        <radio-group name='automount'>
+            <radio label='No automatic mounting' value='0'></radio>
+            <radio label='Mount volume when inserted' value='1'></radio>
+            <radio label='Open volume when inserted' value='2'></radio>
+        </radio-group>
+      </frame>
     </section>
     <section title='Notifications'>
       <toggle name='show_notifications' label='Show notifications about added/removed volumes.'/>

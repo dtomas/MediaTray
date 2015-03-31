@@ -3,7 +3,8 @@ from rox import processes
 from mediatray.mediaicon import MediaIcon
 
 
-def manage_mediaicons(tray, screen, icon_config, win_config, volume_monitor):
+def manage_mediaicons(tray, screen, icon_config, win_config, mediaicon_config,
+                      volume_monitor):
     """
     Manages a L{mediatray.MediaTray}.
 
@@ -22,7 +23,8 @@ def manage_mediaicons(tray, screen, icon_config, win_config, volume_monitor):
     def volume_added(volume_monitor, volume):
         tray.add_icon(
             None, volume,
-            MediaIcon(icon_config, win_config, volume, screen, volume_monitor),
+            MediaIcon(icon_config, win_config, mediaicon_config, volume,
+                      screen, volume_monitor),
         )
 
     def volume_removed(volume_monitor, volume):

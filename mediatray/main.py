@@ -11,8 +11,9 @@ from traylib.winicon import WinIconConfig
 
 from mediatray import MediaTray
 from mediatray.pinboard_config import PinboardConfig, PIN_LEFT, PIN_TOP
-from mediatray.automount_config import AutomountConfig, NO_AUTOMOUNT
+from mediatray.automount_config import AutomountConfig, AUTOMOUNT
 from mediatray.notification_config import NotificationConfig
+from mediatray.mediaicon_config import MediaIconConfig
 from mediatray.host_manager import HostManager
 
 
@@ -29,8 +30,9 @@ class MediaTrayMain(Main):
         self.__o_pin = Option("pin", True)
         self.__o_pin_x = Option("pin_x", PIN_LEFT)
         self.__o_pin_y = Option("pin_y", PIN_TOP)
-        self.__o_automount = Option("automount", NO_AUTOMOUNT)
+        self.__o_automount = Option("automount", AUTOMOUNT)
         self.__o_show_notifications = Option("show_notifications", True)
+        self.__o_hide_unmounted = Option("hide_unmounted", True)
  
     def init_config(self):
         Main.init_config(self)
@@ -47,7 +49,10 @@ class MediaTrayMain(Main):
             automount=self.__o_automount.int_value,
         )
         self.__notification_config = NotificationConfig(
-            show_notifications=self.__o_show_notifications,
+            show_notifications=bool(self.__o_show_notifications.int_value),
+        )
+        self.__mediaicon_config = MediaIconConfig(
+            hide_unmounted=bool(self.__o_hide_unmounted.int_value),
         )
 
         # MediaTray doesn't use the 'hidden' option, so make sure no icons get
@@ -63,6 +68,7 @@ class MediaTrayMain(Main):
                 pinboard_config=self.__pinboard_config,
                 automount_config=self.__automount_config,
                 notification_config=self.__notification_config,
+                mediaicon_config=self.__mediaicon_config,
                 screen=self.__screen,
                 host_manager=HostManager(),
                 volume_monitor=gio.volume_monitor_get(),
@@ -93,6 +99,11 @@ class MediaTrayMain(Main):
         if self.__o_show_notifications.has_changed:
             self.__notification_config.show_notifications = bool(
                 self.__o_show_notifications.int_value
+            )
+
+        if self.__o_hide_unmounted.has_changed:
+            self.__mediaicon_config.hide_unmounted = bool(
+                self.__o_hide_unmounted.int_value
             )
 
         Main.options_changed(self)

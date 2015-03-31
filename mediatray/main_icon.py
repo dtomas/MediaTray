@@ -16,16 +16,23 @@ ICON_THEME.append_search_path(os.path.join(rox.app_dir, 'icons'))
 class MainIcon(MenuIcon):
 
     def __init__(self, tray, icon_config, tray_config, win_config,
-                 host_manager):
+                 mediaicon_config, host_manager):
+        self.__mediaicon_config = mediaicon_config
         MenuIcon.__init__(self, tray, icon_config, tray_config)
         win_config.add_configurable(self)
+        mediaicon_config.add_configurable(self)
         self.__host_manager = host_manager
+
+    def update_option_hide_unmounted(self):
+        self.update_tooltip()
 
     def update_option_all_workspaces(self):
         self.update_tooltip()
 
     def click(self, time):
-        pass
+        self.__mediaicon_config.hide_unmounted = (
+            not self.__mediaicon_config.hide_unmounted 
+        )
 
     def mouse_wheel_up(self, time):
         self.tray.win_config.all_workspaces = True
@@ -51,4 +58,8 @@ class MainIcon(MenuIcon):
             s = _("Scroll down to only show windows of this workspace.")
         else:
             s = _("Scroll up to show windows of all workspaces.")
+        if self.__mediaicon_config.hide_unmounted:
+            s += '\n' + _("Click to show unmounted volumes.")
+        else:
+            s += '\n' + _("Click to hide unmounted volumes.")
         return s

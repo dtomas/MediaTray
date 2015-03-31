@@ -64,8 +64,10 @@ def get_case_sensitive_path(path, root = '/'):
 
 class MediaIcon(MountIcon):
 
-    def __init__(self, icon_config, win_config, volume, screen,
-                 volume_monitor):
+    def __init__(self, icon_config, win_config, mediaicon_config, volume,
+                 screen, volume_monitor):
+        self.__mediaicon_config = mediaicon_config
+        mediaicon_config.add_configurable(self)
         self.__volume = volume
         MountIcon.__init__(self, icon_config, win_config, screen,
                            volume_monitor)
@@ -73,6 +75,8 @@ class MediaIcon(MountIcon):
         self.mount_label = _("Mount")
         self.unmount_label = _("Unmount")
         self.__volume.connect("removed", lambda volume: self.__removed())
+        self.connect("unmounted", lambda self: self.update_visibility())
+        self.connect("mounted", lambda self: self.update_visibility())
 
         mount = self.__volume.get_mount()
 
@@ -89,6 +93,12 @@ class MediaIcon(MountIcon):
             # Should never happen, but anyway...
             return None
         return root.get_path()
+
+
+    # Methods invoked when a MediaIconConfig attribute has changed
+
+    def update_option_hide_unmounted(self):
+        self.update_visibility()
 
 
     # Signal handlers
@@ -217,6 +227,9 @@ class MediaIcon(MountIcon):
     def make_name(self):
         """Return the name of the volume."""
         return self.__volume.get_name()
+
+    def make_visibility(self):
+        return self.is_mounted or not self.__mediaicon_config.hide_unmounted
 
     volume = property(lambda self : self.__volume)
     """The underlying C{gio.Volume} object."""
