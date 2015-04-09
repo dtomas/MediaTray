@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2015-03-31 16:57+CEST\n"
+"POT-Creation-Date: 2015-04-09 11:08+CEST\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,12 +16,12 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 
 #: mediatray/host_editor.py:11
-msgid "Add Host"
-msgstr "Server hinzufügen"
-
-#: mediatray/host_editor.py:11
 msgid "Edit Host"
 msgstr "Server bearbeiten"
+
+#: mediatray/host_editor.py:11 mediatray/main_icon.py:48
+msgid "Add Host"
+msgstr "Server hinzufügen"
 
 #: mediatray/host_editor.py:60
 msgid "Protocol"
@@ -63,19 +63,19 @@ msgstr "Trennen"
 msgid "Really remove host %s?"
 msgstr "Server %s wirklich entfernen?"
 
-#: mediatray/main_icon.py:54
+#: mediatray/main_icon.py:58
 msgid "Scroll down to only show windows of this workspace."
 msgstr "Abwärts rollen, um nur Fenster dieser Arbeitsfläche anzuzeigen."
 
-#: mediatray/main_icon.py:56
+#: mediatray/main_icon.py:60
 msgid "Scroll up to show windows of all workspaces."
 msgstr "Aufwärts rollen, um Fenster aller Arbeitsflächen anzuzeigen."
 
-#: mediatray/main_icon.py:58
+#: mediatray/main_icon.py:62
 msgid "Click to show unmounted volumes."
 msgstr "Klicken, um nicht eingehängte Datenträger anzuzeigen."
 
-#: mediatray/main_icon.py:60
+#: mediatray/main_icon.py:64
 msgid "Click to hide unmounted volumes."
 msgstr "Klicken, um nicht eingehängte Datenträger auszublenden."
 
@@ -87,7 +87,7 @@ msgstr "Einhängen"
 msgid "Unmount"
 msgstr "Aushängen"
 
-#: mediatray/mediaicon.py:205
+#: mediatray/mediaicon.py:207
 msgid "Eject"
 msgstr "Auswerfen"
 
@@ -121,11 +121,13 @@ msgid "Volume \"%s\" has been removed."
 msgstr "Der Datenträger \"%s\" wurde entfernt."
 
 #: mediatray/notification_manager.py:70
-msgid ""
-"Volume \"%s\" has been removed without unmounting. Please do always unmount "
-"a volume before removing it."
+msgid "Volume \"%s\" has been removed without unmounting."
 msgstr ""
 "Der Datenträger \"%s\" wurde entfernt, ohne vorher ausgehängt zu werden. "
+
+#: mediatray/notification_manager.py:72
+msgid "Please do always unmount a volume before removing it."
+msgstr ""
 "Bitte hängen Sie einen Datenträger immer aus, bevor Sie ihn entfernen."
 
 #: tipsH:1 tipsV:1

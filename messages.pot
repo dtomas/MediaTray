@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2015-03-31 16:57+CEST\n"
+"POT-Creation-Date: 2015-04-09 11:08+CEST\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,11 +16,11 @@ msgstr ""
 
 
 #: mediatray/host_editor.py:11
-msgid "Add Host"
+msgid "Edit Host"
 msgstr ""
 
-#: mediatray/host_editor.py:11
-msgid "Edit Host"
+#: mediatray/host_editor.py:11 mediatray/main_icon.py:48
+msgid "Add Host"
 msgstr ""
 
 #: mediatray/host_editor.py:60
@@ -63,19 +63,19 @@ msgstr ""
 msgid "Really remove host %s?"
 msgstr ""
 
-#: mediatray/main_icon.py:54
+#: mediatray/main_icon.py:58
 msgid "Scroll down to only show windows of this workspace."
 msgstr ""
 
-#: mediatray/main_icon.py:56
+#: mediatray/main_icon.py:60
 msgid "Scroll up to show windows of all workspaces."
 msgstr ""
 
-#: mediatray/main_icon.py:58
+#: mediatray/main_icon.py:62
 msgid "Click to show unmounted volumes."
 msgstr ""
 
-#: mediatray/main_icon.py:60
+#: mediatray/main_icon.py:64
 msgid "Click to hide unmounted volumes."
 msgstr ""
 
@@ -87,7 +87,7 @@ msgstr ""
 msgid "Unmount"
 msgstr ""
 
-#: mediatray/mediaicon.py:205
+#: mediatray/mediaicon.py:207
 msgid "Eject"
 msgstr ""
 
@@ -120,7 +120,11 @@ msgid "Volume \"%s\" has been removed."
 msgstr ""
 
 #: mediatray/notification_manager.py:70
-msgid "Volume \"%s\" has been removed without unmounting. Please do always unmount a volume before removing it."
+msgid "Volume \"%s\" has been removed without unmounting."
+msgstr ""
+
+#: mediatray/notification_manager.py:72
+msgid "Please do always unmount a volume before removing it."
 msgstr ""
 
 #: tipsH:1 tipsV:1
