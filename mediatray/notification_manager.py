@@ -67,10 +67,9 @@ def manage_notifications(tray, notification_config):
         else:
             processes.PipeThroughCommand([
                 "notify-send", "--icon=dialog-warning",
-                _("Volume \"%s\" has been removed without unmounting. "
-                "Please do always unmount a volume before removing it.") % (
-                    icon.name
-                )
+                _("Volume \"%s\" has been removed "
+                  "without unmounting.") % icon.name,
+                _("Please do always unmount a volume before removing it.")
             ], None, None).start()
 
     class handlers:
