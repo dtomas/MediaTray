@@ -2,7 +2,7 @@
 			Shows removable media
 			by Dennis Tomas
 
-0.2.1 (unreleased)
+0.2.1
 ~~~~~
 Changed options dialog layout.
 Notification about added/removed/mounted/unmounted volumes.
