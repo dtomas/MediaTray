@@ -50,7 +50,7 @@ class HostIcon(MountIcon):
         self.__file.mount_enclosing_volume(gtk.MountOperation(), mounted)
 
     def get_fallback_icon_path(self):
-        return os.path.join(rox.app_dir, 'icons', 'drive-harddisk.png')
+        return os.path.join(rox.app_dir, 'icons', 'network-server.png')
 
     def get_icon_names(self):
         return ['network-server']
