@@ -76,7 +76,7 @@ class HostIcon(MountIcon):
             if rox.confirm(
                     _("Really remove host %s?") % self.__host.name,
                     gtk.STOCK_REMOVE):
-                self.__host.remove()
+                self.__host_manager.remove_host(self.__host.uri)
 
         menu_item = gtk.ImageMenuItem(gtk.STOCK_REMOVE)
         menu_item.connect("activate", remove)
