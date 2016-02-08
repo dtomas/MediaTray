@@ -26,9 +26,8 @@ except IOError:
 
 
 for path in volumes_on_pinboard:
-    if not os.path.isdir(path):
-        filer.rpc.PinboardRemove(Path=path)
-        filer.rpc.UnsetIcon(Path=path)
+    filer.rpc.PinboardRemove(Path=path)
+    filer.rpc.UnsetIcon(Path=path)
 
 if volumes_on_pinboard:
     volumes_on_pinboard = []
