@@ -217,8 +217,9 @@ class MountIcon(WinIcon):
         self.update_emblem()
         for window in self.windows:
             window.close(0)
-        mount.disconnect(self.__unmounted_handler)
-        self.__unmounted_handler = None
+        if self.__unmounted_handler is not None:
+            mount.disconnect(self.__unmounted_handler)
+            self.__unmounted_handler = None
         self.emit("unmounted")
 
 
