@@ -72,11 +72,11 @@ class Host(gobject.GObject):
     path = property(lambda self : self.__path)
     title = property(lambda self : self.__title)
 
-
 gobject.type_register(Host)
 gobject.signal_new(
     "changed", Host, gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ()
 )
+
 
 class HostManager(gobject.GObject):
     
