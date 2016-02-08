@@ -47,7 +47,7 @@ class HostEditor(gtk.Dialog):
             self.__hostname_input.set_text(self.__host.hostname)
             self.__username_input.set_text(self.__host.username)
             self.__path_input.set_text(self.__host.path)
-            self.__port_select.set_value(self.__host.port)
+            self.__port_select.set_value(float(self.__host.port))
             iter = self.__protocols_model.get_iter_first()
             while iter:
                 protocol = self.__protocols_model.get_value(iter, 1)
