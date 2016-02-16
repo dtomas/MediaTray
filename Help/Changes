@@ -2,6 +2,10 @@
 			Shows removable media
 			by Dennis Tomas
 
+0.2.2 (unreleased)
+~~~~~
+Now using TrayLib 0.6, see TrayLib/Help/Changes.
+
 0.2.1
 ~~~~~
 Changed options dialog layout.
