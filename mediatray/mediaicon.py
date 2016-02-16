@@ -67,7 +67,9 @@ class MediaIcon(MountIcon):
     def __init__(self, icon_config, win_config, mediaicon_config, volume,
                  screen, volume_monitor):
         self.__mediaicon_config = mediaicon_config
-        mediaicon_config.add_configurable(self)
+        mediaicon_config.connect(
+            "hide-unmounted-changed", lambda config: self.update_visibility()
+        )
         self.__volume = volume
         MountIcon.__init__(self, icon_config, win_config, screen,
                            volume_monitor)
@@ -93,12 +95,6 @@ class MediaIcon(MountIcon):
             # Should never happen, but anyway...
             return None
         return root.get_path()
-
-
-    # Methods invoked when a MediaIconConfig attribute has changed
-
-    def update_option_hide_unmounted(self):
-        self.update_visibility()
 
 
     # Signal handlers

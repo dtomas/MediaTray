@@ -15,19 +15,16 @@ ICON_THEME.append_search_path(os.path.join(rox.app_dir, 'icons'))
 
 class MainIcon(MenuIcon):
 
-    def __init__(self, tray, icon_config, tray_config, win_config,
-                 mediaicon_config, host_manager):
+    def __init__(self, tray, win_config, mediaicon_config, host_manager):
         self.__mediaicon_config = mediaicon_config
-        MenuIcon.__init__(self, tray, icon_config, tray_config)
-        win_config.add_configurable(self)
-        mediaicon_config.add_configurable(self)
+        MenuIcon.__init__(self, tray)
+        win_config.connect(
+            "all-workspaces-changed", lambda config: self.update_tooltip()
+        )
+        mediaicon_config.connect(
+            "hide-unmounted-changed", lambda config: self.update_tooltip()
+        )
         self.__host_manager = host_manager
-
-    def update_option_hide_unmounted(self):
-        self.update_tooltip()
-
-    def update_option_all_workspaces(self):
-        self.update_tooltip()
 
     def click(self, time):
         self.__mediaicon_config.hide_unmounted = (
