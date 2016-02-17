@@ -16,14 +16,13 @@ def manage_hosticons(tray, host_manager, icon_config, win_config, screen,
     def host_removed(host_manager, host):
         tray.remove_icon(host)
 
-    class handlers:
-        pass
+    handlers = []
 
     def manage():
-        handlers.host_added_handler = (
+        handlers.append(
             host_manager.connect("host-added", host_added)
         )
-        handlers.host_removed_handler = (
+        handlers.append(
             host_manager.connect("host-removed", host_removed)
         )
         for host in host_manager.hosts.itervalues():
@@ -31,8 +30,8 @@ def manage_hosticons(tray, host_manager, icon_config, win_config, screen,
             yield None
 
     def unmanage():
-        host_manager.disconnect(handlers.host_added_handler)
-        host_manager.disconnect(handlers.host_removed_handler)
+        for handler in handlers:
+            host_manager.disconnect(handler)
         yield None
 
     return manage, unmanage

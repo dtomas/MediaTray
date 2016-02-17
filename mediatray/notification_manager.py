@@ -72,27 +72,18 @@ def manage_notifications(tray, notification_config):
                 _("Please do always unmount a volume before removing it.")
             ], None, None).start()
 
-    class handlers:
-        pass
+    tray_handlers = []
 
     def manage():
-        handlers.icon_added_handler = tray.connect("icon-added", icon_added)
-        handlers.icon_removed_handler = tray.connect(
-            "icon-removed", icon_removed
-        )
-        handlers.icon_mounted_handler = tray.connect(
-            "icon-mounted", icon_mounted
-        )
-        handlers.icon_unmounted_handler = tray.connect(
-            "icon-unmounted", icon_unmounted
-        )
+        tray_handlers.append(tray.connect("icon-added", icon_added))
+        tray_handlers.append(tray.connect("icon-removed", icon_removed))
+        tray_handlers.append(tray.connect("icon-mounted", icon_mounted))
+        tray_handlers.append(tray.connect("icon-unmounted", icon_unmounted))
         yield None
 
     def unmanage():
-        tray.disconnect(handlers.icon_added_handler)
-        tray.disconnect(handlers.icon_removed_handler)
-        tray.disconnect(handlers.icon_mounted_handler)
-        tray.disconnect(handlers.icon_unmounted_handler)
+        for handler in tray_handlers:
+            tray.disconnect(handler)
         yield None
 
     return manage, unmanage

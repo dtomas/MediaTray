@@ -12,15 +12,15 @@ def manage_automount(tray, automount_config):
     def icon_added(tray, icon):
         automount_actions[automount_config.automount](icon)
 
-    class handlers:
-        pass
+    tray_handlers = []
 
     def manage():
-        handlers.icon_added_handler = tray.connect("icon-added", icon_added)
+        tray_handlers.append(tray.connect("icon-added", icon_added))
         yield None
 
     def unmanage():
-        tray.disconnect(handlers.icon_added_handler)
+        for handler in tray_handlers:
+            tray.disconnect(handler)
         yield None
 
     return manage, unmanage

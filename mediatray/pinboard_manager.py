@@ -123,39 +123,30 @@ def manage_pinboard(tray, pinboard_config):
             remove_icon_from_pinboard(icon)
             add_icon_to_pinboard(icon, pinboard_config)
 
-    class handlers:
-        pass
+    tray_handlers = []
+    pinboard_handlers = []
 
     def manage():
-        handlers.icon_added_handler = tray.connect("icon-added", icon_added)
-        handlers.icon_removed_handler = tray.connect(
-            "icon-removed", icon_removed
+        tray_handlers.append(tray.connect("icon-added", icon_added))
+        tray_handlers.append(tray.connect("icon-removed", icon_removed))
+        tray_handlers.append(tray.connect("icon-mounted", icon_mounted))
+        tray_handlers.append(tray.connect("icon-unmounted", icon_unmounted))
+        pinboard_handlers.append(
+            pinboard_config.connect("pin-changed", pin_changed)
         )
-        handlers.icon_mounted_handler = tray.connect(
-            "icon-mounted", icon_mounted
+        pinboard_handlers.append(
+            pinboard_config.connect("pin-x-changed", pin_xy_changed)
         )
-        handlers.icon_unmounted_handler = tray.connect(
-            "icon-unmounted", icon_unmounted
-        )
-        handlers.pin_changed_handler = pinboard_config.connect(
-            "pin-changed", pin_changed
-        )
-        handlers.pin_x_changed_handler = pinboard_config.connect(
-            "pin-x-changed", pin_xy_changed
-        )
-        handlers.pin_y_changed_handler = pinboard_config.connect(
-            "pin-y-changed", pin_xy_changed
+        pinboard_handlers.append(
+            pinboard_config.connect("pin-y-changed", pin_xy_changed)
         )
         yield None
 
     def unmanage():
-        tray.disconnect(handlers.icon_added_handler)
-        tray.disconnect(handlers.icon_removed_handler)
-        tray.disconnect(handlers.icon_mounted_handler)
-        tray.disconnect(handlers.icon_unmounted_handler)
-        pinboard_config.disconnect(handlers.pin_changed_handler)
-        pinboard_config.disconnect(handlers.pin_x_changed_handler)
-        pinboard_config.disconnect(handlers.pin_y_changed_handler)
+        for handler in tray_handlers:
+            tray.disconnect(handler)
+        for handler in pinboard_handlers:
+            pinboard_config.disconnect(handler)
         for icon in tray.icons:
             remove_icon_from_pinboard(icon)
             yield None
