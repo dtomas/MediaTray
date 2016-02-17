@@ -1,7 +1,6 @@
 from rox import processes
 
 from mediatray.mediaicon import MediaIcon
-from mediatray.hosticon import HostIcon
 
 
 def manage_notifications(tray, notification_config):
@@ -9,27 +8,17 @@ def manage_notifications(tray, notification_config):
     def icon_mounted(tray, icon):
         if not notification_config.show_notifications:
             return
-        if isinstance(icon, MediaIcon):
-            msg = _("Volume \"%s\" has been mounted.")
-        elif isinstance(icon, HostIcon):
-            msg = _("Connected to host \"%s\".")
-        else:
-            return
         processes.PipeThroughCommand([
-            "notify-send", "--icon=%s" % icon.find_icon_name(), msg % icon.name
+            "notify-send", "--icon=%s" % icon.find_icon_name(),
+            icon.get_mounted_message()
         ], None, None).start()
 
     def icon_unmounted(tray, icon):
         if not notification_config.show_notifications:
             return
-        if isinstance(icon, MediaIcon):
-            msg = _(
-                "Volume \"%s\" has been unmounted and can be safely removed."
-            )
-        elif isinstance(icon, HostIcon):
-            msg = _("Disconnected from host \"%s\".")
         processes.PipeThroughCommand([
-            "notify-send", "--icon=%s" % icon.find_icon_name(), msg % icon.name
+            "notify-send", "--icon=%s" % icon.find_icon_name(),
+            icon.get_unmounted_message()
         ], None, None).start()
 
     def icon_added(tray, icon):

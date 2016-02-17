@@ -40,6 +40,12 @@ class HostIcon(MountIcon):
         except gio.Error:
             return None
 
+    def get_mounted_message(self):
+        return _("Connected to host \"%s\".") % self.name
+
+    def get_unmounted_message(self):
+        return _("Disconnected from host \"%s\".") % self.name
+
     def make_path(self):
         return self.__file.get_path()
 
