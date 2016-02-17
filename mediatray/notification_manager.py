@@ -6,17 +6,6 @@ from mediatray.hosticon import HostIcon
 
 def manage_notifications(tray, notification_config):
 
-    def find_icon_for_mount(mount):
-        mountpoint = mount.get_root()
-        for icon in tray.icons:
-            icon_mount = icon.get_mount()
-            if icon_mount is None:
-                continue
-            if icon_mount.get_root() == mountpoint:
-                return icon
-        else:
-            return None
-
     def icon_mounted(tray, icon):
         if not notification_config.show_notifications:
             return
