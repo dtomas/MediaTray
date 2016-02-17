@@ -67,12 +67,16 @@ class MediaIcon(MountIcon):
     def __init__(self, icon_config, win_config, mediaicon_config, volume,
                  screen, volume_monitor):
         self.__mediaicon_config = mediaicon_config
-        mediaicon_config.connect(
-            "hide-unmounted-changed", lambda config: self.update_visibility()
-        )
+        self.__mediaicon_config_signal_handlers = [
+            mediaicon_config.connect(
+                "hide-unmounted-changed",
+                lambda config: self.update_visibility()
+            )
+        ]
         self.__volume = volume
-        MountIcon.__init__(self, icon_config, win_config, screen,
-                           volume_monitor)
+        MountIcon.__init__(
+            self, icon_config, win_config, screen, volume_monitor
+        )
 
         self.mount_label = _("Mount")
         self.unmount_label = _("Unmount")
@@ -98,6 +102,10 @@ class MediaIcon(MountIcon):
 
 
     # Signal handlers
+
+    def __destroy(self):
+        for handler in self.__mediaicon_config_signal_handlers:
+            self.__mediaicon_config.disconnect(handler)
 
     def __removed(self):
         for window in self.windows:
