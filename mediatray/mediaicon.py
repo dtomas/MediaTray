@@ -89,6 +89,26 @@ class MediaIcon(MountIcon):
     def get_mount(self):
         return self.__volume.get_mount()
 
+    def get_mounted_message(self):
+        return _("Volume \"%s\" has been mounted.") % self.name
+
+    def get_unmounted_message(self):
+        return _(
+            "Volume \"%s\" has been unmounted and can be safely removed."
+        ) % self.name
+
+    def get_added_message(self):
+        return _("Volume \"%s\" has been inserted.") % self.name
+
+    def get_removed_message(self):
+        return _("Volume \"%s\" has been removed.") % self.name
+
+    def get_removed_detail(self):
+        return (
+            _("Please do always unmount a volume before removing it.")
+            if self.is_mounted else ""
+        )
+
     def make_path(self):
         """The volume's mount point or C{None} if the volume is not mounted."""
         mount = self.__volume.get_mount()

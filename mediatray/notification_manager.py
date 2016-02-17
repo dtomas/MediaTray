@@ -1,54 +1,49 @@
 from rox import processes
 
-from mediatray.mediaicon import MediaIcon
-
 
 def manage_notifications(tray, notification_config):
 
     def icon_mounted(tray, icon):
         if not notification_config.show_notifications:
             return
+        msg = icon.get_mounted_message()
+        if not msg:
+            return
         processes.PipeThroughCommand([
-            "notify-send", "--icon=%s" % icon.find_icon_name(),
-            icon.get_mounted_message()
+            "notify-send", "--icon=%s" % icon.find_icon_name(), msg
         ], None, None).start()
 
     def icon_unmounted(tray, icon):
         if not notification_config.show_notifications:
             return
+        msg = icon.get_unmounted_message()
+        if not msg:
+            return
         processes.PipeThroughCommand([
-            "notify-send", "--icon=%s" % icon.find_icon_name(),
-            icon.get_unmounted_message()
+            "notify-send", "--icon=%s" % icon.find_icon_name(), msg
         ], None, None).start()
 
     def icon_added(tray, icon):
-        if not isinstance(icon, MediaIcon):
-            return
         if not notification_config.show_notifications:
+            return
+        msg = icon.get_added_message()
+        if not msg:
             return
         processes.PipeThroughCommand([
             "notify-send",
-            "--icon=%s" % icon.find_icon_name(),
-            _("Volume \"%s\" has been inserted.") % icon.name
+            "--icon=%s" % icon.find_icon_name(), msg
         ], None, None).start()
 
     def icon_removed(tray, icon):
-        if not isinstance(icon, MediaIcon):
-            return
         if not notification_config.show_notifications:
             return
-        if not icon.is_mounted:
-            processes.PipeThroughCommand([
-                "notify-send", "--icon=%s" % icon.find_icon_name(),
-                _("Volume \"%s\" has been removed.") % icon.name
-            ], None, None).start()
-        else:
-            processes.PipeThroughCommand([
-                "notify-send", "--icon=dialog-warning",
-                _("Volume \"%s\" has been removed "
-                  "without unmounting.") % icon.name,
-                _("Please do always unmount a volume before removing it.")
-            ], None, None).start()
+        msg = icon.get_removed_message()
+        if not msg:
+            return
+        detail = icon.get_removed_detail()
+        processes.PipeThroughCommand([
+            "notify-send", "--icon=%s" % icon.find_icon_name(), msg, detail
+        ], None, None).start()
 
     tray_handlers = []
 

@@ -68,12 +68,19 @@ class MountIcon(WinIcon):
         raise NotImplementedError
 
     def get_mounted_message(self):
-        return _("Volume \"%s\" has been mounted.") % self.name
+        return None
 
     def get_unmounted_message(self):
-        return _(
-            "Volume \"%s\" has been unmounted and can be safely removed."
-        ) % self.name
+        return None
+
+    def get_added_message(self):
+        return None
+
+    def get_removed_message(self):
+        return None
+
+    def get_removed_detail(self):
+        return None
 
     @property
     def path(self):
