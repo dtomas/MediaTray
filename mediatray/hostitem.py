@@ -5,19 +5,19 @@ import gtk
 
 import rox
 
-from mediatray.mounticon import MountIcon
+from traylib.icons import ThemedIcon
+
+from mediatray.mountitem import MountItem
 from mediatray.host_editor import HostEditor
 
 
-class HostIcon(MountIcon):
+class HostItem(MountItem):
 
-    def __init__(self, icon_config, win_config, screen, host_manager, host,
-                 volume_monitor):
+    def __init__(self, win_config, screen, host_manager, host, volume_monitor):
         self.__host_manager = host_manager
         self.__host = host
         self.__file = gio.File(host.uri)
-        MountIcon.__init__(self, icon_config, win_config, screen,
-                           volume_monitor)
+        MountItem.__init__(self, win_config, screen, volume_monitor)
 
         self.mount_label = _("Connect")
         self.unmount_label = _("Disconnect")
@@ -26,9 +26,7 @@ class HostIcon(MountIcon):
     def __host_changed(self, host):
         def update_file():
             self.__file = gio.File(host.uri)
-            self.update_name()
-            self.update_tooltip()
-            self.update_emblem()
+            self.changed("name", "emblem")
         if self.is_mounted:
             self.unmount(on_unmount=update_file)
         else:
@@ -41,12 +39,12 @@ class HostIcon(MountIcon):
             return None
 
     def get_mounted_message(self):
-        return _("Connected to host \"%s\".") % self.name
+        return _("Connected to host \"%s\".") % self.get_name()
 
     def get_unmounted_message(self):
-        return _("Disconnected from host \"%s\".") % self.name
+        return _("Disconnected from host \"%s\".") % self.get_name()
 
-    def make_path(self):
+    def get_path(self):
         return self.__file.get_path()
 
     def _mount(self, on_mount=None):
@@ -55,17 +53,14 @@ class HostIcon(MountIcon):
                 on_mount()
         self.__file.mount_enclosing_volume(gtk.MountOperation(), mounted)
 
-    def get_fallback_icon_path(self):
-        return os.path.join(rox.app_dir, 'icons', 'drive-harddisk.png')
+    def get_icons(self):
+        return [ThemedIcon('network-server')]
 
-    def get_icon_names(self):
-        return ['network-server']
-
-    def make_name(self):
+    def get_name(self):
         return self.__host.name
 
     def get_menu_right(self):
-        menu = MountIcon.get_menu_right(self)
+        menu = MountItem.get_menu_right(self)
 
         menu.append(gtk.SeparatorMenuItem())
 
@@ -89,3 +84,8 @@ class HostIcon(MountIcon):
         menu.append(menu_item)
 
         return menu
+
+    def is_visible(self):
+        return True
+
+    host = property(lambda self: self.__host)

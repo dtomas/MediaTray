@@ -2,58 +2,44 @@ from functools import partial
 
 import gobject
 
-from rox import tasks
-
 from traylib import *
 from traylib.managed_tray import ManagedTray
-from traylib.winicon_manager import manage_winicons
+from traylib.main_box_manager import manage_main_box
 
-from mediatray.main_icon import MainIcon
-from mediatray.mounticon import MountIcon
-from mediatray.mediaicon_manager import manage_mediaicons
-from mediatray.hosticon_manager import manage_hosticons
+from mediatray.main_item import MediaTrayMainItem
+from mediatray.mountitem import MountItem
+from mediatray.mediaitem_manager import manage_mediaitems
+from mediatray.hostitem_manager import manage_hostitems
 from mediatray.notification_manager import manage_notifications
 from mediatray.pinboard_manager import manage_pinboard
 from mediatray.automount_manager import manage_automount
+from mediatray.winitem_manager import manage_winitems
 
 
 class MediaTray(ManagedTray):
-    """
-    Tray containing L{mediatray.mediaicon.MediaIcon}s.
-    Managed by L{mediatray.mediaicon_manager.manage_mediaicons}.
-    """
 
-    def __init__(self, icon_config, tray_config, win_config, pinboard_config,
-                 notification_config, automount_config, mediaicon_config,
+    def __init__(self, tray_config, icon_config, win_config, pinboard_config,
+                 notification_config, automount_config, mediaitem_config,
                  screen, host_manager, volume_monitor):
         self.__win_config = win_config
         self.__screen = screen
-        self.__icon_handlers = {}
         ManagedTray.__init__(
-            self, icon_config, tray_config,
-            create_menu_icon=partial(
-                MainIcon,
-                win_config=win_config,
-                mediaicon_config=mediaicon_config,
-                host_manager=host_manager,
-            ),
+            self,
             managers=[
                 partial(
                     manage_pinboard,
                     pinboard_config=pinboard_config,
                 ),
                 partial(
-                    manage_mediaicons,
+                    manage_mediaitems,
                     screen=screen,
-                    icon_config=icon_config,
                     win_config=win_config,
-                    mediaicon_config=mediaicon_config,
+                    mediaitem_config=mediaitem_config,
                     volume_monitor=volume_monitor,
                 ),
                 #partial(
-                #    manage_hosticons,
+                #    manage_hostitems,
                 #    screen=screen,
-                #    icon_config=icon_config,
                 #    win_config=win_config,
                 #    host_manager=host_manager,
                 #    volume_monitor=volume_monitor,
@@ -66,37 +52,54 @@ class MediaTray(ManagedTray):
                     manage_notifications,
                     notification_config=notification_config,
                 ),
-                partial(manage_winicons, screen=screen),
+                partial(manage_winitems, screen=screen, win_config=win_config),
+                partial(
+                    manage_main_box,
+                    tray_config=tray_config,
+                    create_main_item=partial(
+                        MediaTrayMainItem,
+                        tray_config=tray_config,
+                        icon_config=icon_config,
+                        win_config=win_config,
+                        mediaitem_config=mediaitem_config,
+                        host_manager=host_manager,
+                    ),
+                ),
             ],
         )
+        self.__item_handlers = {}
 
-    def add_icon(self, box_id, icon_id, icon):
-        ManagedTray.add_icon(self, box_id, icon_id, icon)
-        self.__icon_handlers[icon_id] = (
-            icon.connect(
-                "mounted", lambda icon: self.emit("icon-mounted", icon)
-            ),
-            icon.connect(
-                "unmounted", lambda icon: self.emit("icon-unmounted", icon)
-            )
-        )
+        self.connect("item-added", self.__item_added)
+        self.connect("item-removed", self.__item_removed)
 
-    def remove_icon(self, icon_id):
-        icon = self.get_icon(icon_id)
-        if icon is None:
+    def __item_added(self, tray, box, item):
+        if not isinstance(item, MountItem):
             return
-        ManagedTray.remove_icon(self, icon_id)
-        for handler in self.__icon_handlers.pop(icon_id):
-            icon.disconnect(handler)
+        self.__item_handlers[item] = [
+            item.connect("mounted", self.__item_mounted),
+            item.connect("unmounted", self.__item_unmounted),
+        ]
+    
+    def __item_removed(self, tray, box, item):
+        if not isinstance(item, MountItem):
+            return
+        for handler in self.__item_handlers.pop(item):
+            item.disconnect(handler)
+
+    def __item_mounted(self, item):
+        self.emit("item-mounted", item)
+
+    def __item_unmounted(self, item):
+        self.emit("item-unmounted", item)
 
     win_config = property(lambda self : self.__win_config)
 
 gobject.type_register(MediaTray)
 gobject.signal_new(
-    "icon-mounted", MediaTray, gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE,
-    (MountIcon,)
+    "item-mounted", MediaTray, gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE,
+    (MountItem,)
 )
 gobject.signal_new(
-    "icon-unmounted", MediaTray, gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE,
-    (MountIcon,)
+    "item-unmounted", MediaTray, gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE,
+    (MountItem,)
 )

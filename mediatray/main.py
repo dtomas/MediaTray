@@ -7,13 +7,13 @@ from rox.options import Option
 
 from traylib import wnck
 from traylib.main import Main
-from traylib.winicon import WinIconConfig
+from traylib.winitem_config import WinItemConfig
 
 from mediatray import MediaTray
 from mediatray.pinboard_config import PinboardConfig, PIN_LEFT, PIN_TOP
 from mediatray.automount_config import AutomountConfig, AUTOMOUNT
 from mediatray.notification_config import NotificationConfig
-from mediatray.mediaicon_config import MediaIconConfig
+from mediatray.mediaitem_config import MediaItemConfig
 from mediatray.host_manager import HostManager
 
 
@@ -36,7 +36,7 @@ class MediaTrayMain(Main):
  
     def init_config(self):
         Main.init_config(self)
-        self.__win_config = WinIconConfig(
+        self.__win_config = WinItemConfig(
             all_workspaces=self.__o_all_workspaces.int_value,
             arrow=self.__o_arrow.int_value,
         )
@@ -51,7 +51,7 @@ class MediaTrayMain(Main):
         self.__notification_config = NotificationConfig(
             show_notifications=bool(self.__o_show_notifications.int_value),
         )
-        self.__mediaicon_config = MediaIconConfig(
+        self.__mediaitem_config = MediaItemConfig(
             hide_unmounted=bool(self.__o_hide_unmounted.int_value),
         )
 
@@ -59,20 +59,18 @@ class MediaTrayMain(Main):
         # hidden.
         self.icon_config.hidden = False
 
-    def mainloop(self, app_args):
-        Main.mainloop(
-            self, app_args,
-            partial(
-                MediaTray,
-                win_config=self.__win_config,
-                pinboard_config=self.__pinboard_config,
-                automount_config=self.__automount_config,
-                notification_config=self.__notification_config,
-                mediaicon_config=self.__mediaicon_config,
-                screen=self.__screen,
-                host_manager=HostManager(),
-                volume_monitor=gio.volume_monitor_get(),
-            )
+    def create_tray(self):
+        return MediaTray(
+            tray_config=self.tray_config,
+            icon_config=self.icon_config,
+            win_config=self.__win_config,
+            pinboard_config=self.__pinboard_config,
+            automount_config=self.__automount_config,
+            notification_config=self.__notification_config,
+            mediaitem_config=self.__mediaitem_config,
+            screen=self.__screen,
+            host_manager=HostManager(),
+            volume_monitor=gio.volume_monitor_get(),
         )
 
     def options_changed(self):
@@ -102,7 +100,7 @@ class MediaTrayMain(Main):
             )
 
         if self.__o_hide_unmounted.has_changed:
-            self.__mediaicon_config.hide_unmounted = bool(
+            self.__mediaitem_config.hide_unmounted = bool(
                 self.__o_hide_unmounted.int_value
             )
 
