@@ -12,6 +12,8 @@ def manage_winitems(tray, win_config, screen):
         window_item_handlers = {}
 
     def update_window_item(window_item):
+        if window_item.get_path() is None:
+            return
         path = os.path.realpath(window_item.get_path())
         for box in tray.boxes:
             for item in box.items:
