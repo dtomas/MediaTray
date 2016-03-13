@@ -83,12 +83,12 @@ class MountItem(AWindowsItem):
         submenus for every open window. If there is only one open window,
         the window-related items will be appended to the main menu.
         """
-        #menu = AWindowsItem.get_menu_right(self)
-        #if not menu:
-        menu = gtk.Menu()
-        #else:
-        #    menu.prepend(gtk.SeparatorMenuItem())
-        #    menu.prepend(gtk.SeparatorMenuItem())
+        menu = AWindowsItem.get_menu_right(self)
+        if not menu:
+            menu = gtk.Menu()
+        else:
+            menu.prepend(gtk.SeparatorMenuItem())
+            menu.prepend(gtk.SeparatorMenuItem())
 
         if self.is_mounted:
             unmount_item = gtk.ImageMenuItem(gtk.STOCK_CANCEL)
@@ -130,7 +130,7 @@ class MountItem(AWindowsItem):
         self.open()
         return True
 
-    def get_name(self):
+    def get_base_name(self):
         """Return the name of the volume."""
         raise NotImplementedError
 

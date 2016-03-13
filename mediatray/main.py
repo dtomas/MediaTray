@@ -59,6 +59,8 @@ class MediaTrayMain(Main):
         # hidden.
         self.icon_config.hidden = False
 
+        self.__win_config.menu_has_kill = False
+
     def create_tray(self):
         return MediaTray(
             tray_config=self.tray_config,

@@ -39,10 +39,10 @@ class HostItem(MountItem):
             return None
 
     def get_mounted_message(self):
-        return _("Connected to host \"%s\".") % self.get_name()
+        return _("Connected to host \"%s\".") % self.get_base_name()
 
     def get_unmounted_message(self):
-        return _("Disconnected from host \"%s\".") % self.get_name()
+        return _("Disconnected from host \"%s\".") % self.get_base_name()
 
     def get_path(self):
         return self.__file.get_path()
@@ -56,7 +56,7 @@ class HostItem(MountItem):
     def get_icons(self):
         return [ThemedIcon('network-server')]
 
-    def get_name(self):
+    def get_base_name(self):
         return self.__host.name
 
     def get_menu_right(self):

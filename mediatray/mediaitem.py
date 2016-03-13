@@ -108,18 +108,18 @@ class MediaItem(MountItem):
         return self.__volume.get_mount()
 
     def get_mounted_message(self):
-        return _("Volume \"%s\" has been mounted.") % self.get_name()
+        return _("Volume \"%s\" has been mounted.") % self.get_base_name()
 
     def get_unmounted_message(self):
         return _(
             "Volume \"%s\" has been unmounted and can be safely removed."
-        ) % self.get_name()
+        ) % self.get_base_name()
 
     def get_added_message(self):
-        return _("Volume \"%s\" has been inserted.") % self.get_name()
+        return _("Volume \"%s\" has been inserted.") % self.get_base_name()
 
     def get_removed_message(self):
-        return _("Volume \"%s\" has been removed.") % self.get_name()
+        return _("Volume \"%s\" has been removed.") % self.get_base_name()
 
     def get_removed_detail(self):
         return (
@@ -265,7 +265,7 @@ class MediaItem(MountItem):
         icons.append(ThemedIcon("drive-harddisk"))
         return icons
 
-    def get_name(self):
+    def get_base_name(self):
         """Return the name of the volume."""
         return self.__volume.get_name()
 
