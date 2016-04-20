@@ -7,6 +7,9 @@ from mediatray.mountitem import MountItem
 
 def manage_winitems(tray, win_config, screen):
 
+    if screen is None:
+        return lambda: None, lambda: None
+
     class state:
         screen_handlers = []
         window_item_handlers = {}
