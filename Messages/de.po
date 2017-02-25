@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2015-04-09 11:08+CEST\n"
+"POT-Creation-Date: 2017-02-25 21:23+CET\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,12 +16,12 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 
 #: mediatray/host_editor.py:11
-msgid "Edit Host"
-msgstr "Server bearbeiten"
-
-#: mediatray/host_editor.py:11 mediatray/main_icon.py:48
 msgid "Add Host"
 msgstr "Server hinzufügen"
+
+#: mediatray/host_editor.py:11
+msgid "Edit Host"
+msgstr "Server bearbeiten"
 
 #: mediatray/host_editor.py:60
 msgid "Protocol"
@@ -51,84 +51,78 @@ msgstr "Bitte geben Sie den Servernamen ein."
 msgid "You must select a protocol."
 msgstr "Bitte wählen Sie ein Protokoll."
 
-#: mediatray/hosticon.py:22
+#: mediatray/hostitem.py:22
 msgid "Connect"
 msgstr "Verbinden"
 
-#: mediatray/hosticon.py:23
+#: mediatray/hostitem.py:23
 msgid "Disconnect"
 msgstr "Trennen"
 
-#: mediatray/hosticon.py:77
-msgid "Really remove host %s?"
-msgstr "Server %s wirklich entfernen?"
-
-#: mediatray/main_icon.py:58
-msgid "Scroll down to only show windows of this workspace."
-msgstr "Abwärts rollen, um nur Fenster dieser Arbeitsfläche anzuzeigen."
-
-#: mediatray/main_icon.py:60
-msgid "Scroll up to show windows of all workspaces."
-msgstr "Aufwärts rollen, um Fenster aller Arbeitsflächen anzuzeigen."
-
-#: mediatray/main_icon.py:62
-msgid "Click to show unmounted volumes."
-msgstr "Klicken, um nicht eingehängte Datenträger anzuzeigen."
-
-#: mediatray/main_icon.py:64
-msgid "Click to hide unmounted volumes."
-msgstr "Klicken, um nicht eingehängte Datenträger auszublenden."
-
-#: mediatray/mediaicon.py:75
-msgid "Mount"
-msgstr "Einhängen"
-
-#: mediatray/mediaicon.py:76
-msgid "Unmount"
-msgstr "Aushängen"
-
-#: mediatray/mediaicon.py:207
-msgid "Eject"
-msgstr "Auswerfen"
-
-#: mediatray/mounticon.py:335
-msgid "Open in terminal"
-msgstr "Im Terminal öffnen"
-
-#: mediatray/notification_manager.py:24
-msgid "Volume \"%s\" has been mounted."
-msgstr "Der Datenträger \"%s\" wurde eingehängt."
-
-#: mediatray/notification_manager.py:26
+#: mediatray/hostitem.py:42
 msgid "Connected to host \"%s\"."
 msgstr "Verbunden mit \"%s\"."
 
-#: mediatray/notification_manager.py:37
+#: mediatray/hostitem.py:45
+msgid "Disconnected from host \"%s\"."
+msgstr "Verbindung zu \"%s\" getrennt."
+
+#: mediatray/hostitem.py:78
+msgid "Really remove host %s?"
+msgstr "Server %s wirklich entfernen?"
+
+#: mediatray/main_item.py:69
+msgid "Scroll down to only show windows of this workspace."
+msgstr "Abwärts rollen, um nur Fenster dieser Arbeitsfläche anzuzeigen."
+
+#: mediatray/main_item.py:71
+msgid "Scroll up to show windows of all workspaces."
+msgstr "Aufwärts rollen, um Fenster aller Arbeitsflächen anzuzeigen."
+
+#: mediatray/main_item.py:73
+msgid "Click to show unmounted volumes."
+msgstr "Klicken, um nicht eingehängte Datenträger anzuzeigen."
+
+#: mediatray/main_item.py:75
+msgid "Click to hide unmounted volumes."
+msgstr "Klicken, um nicht eingehängte Datenträger auszublenden."
+
+#: mediatray/mediaitem.py:79
+msgid "Mount"
+msgstr "Einhängen"
+
+#: mediatray/mediaitem.py:80
+msgid "Unmount"
+msgstr "Aushängen"
+
+#: mediatray/mediaitem.py:111
+msgid "Volume \"%s\" has been mounted."
+msgstr "Der Datenträger \"%s\" wurde eingehängt."
+
+#: mediatray/mediaitem.py:114
 msgid "Volume \"%s\" has been unmounted and can be safely removed."
 msgstr ""
 "Der Datenträger \"%s\" wurde ausgehängt und kann nun sicher entfernt werden."
 
-#: mediatray/notification_manager.py:41
-msgid "Disconnected from host \"%s\"."
-msgstr "Verbindung zu \"%s\" getrennt."
-
-#: mediatray/notification_manager.py:54
+#: mediatray/mediaitem.py:119
 msgid "Volume \"%s\" has been inserted."
 msgstr "Der Datenträger \"%s\" wurde eingelegt."
 
-#: mediatray/notification_manager.py:65
+#: mediatray/mediaitem.py:122
 msgid "Volume \"%s\" has been removed."
 msgstr "Der Datenträger \"%s\" wurde entfernt."
 
-#: mediatray/notification_manager.py:70
-msgid "Volume \"%s\" has been removed without unmounting."
-msgstr ""
-"Der Datenträger \"%s\" wurde entfernt, ohne vorher ausgehängt zu werden. "
-
-#: mediatray/notification_manager.py:72
+#: mediatray/mediaitem.py:126
 msgid "Please do always unmount a volume before removing it."
-msgstr ""
-"Bitte hängen Sie einen Datenträger immer aus, bevor Sie ihn entfernen."
+msgstr "Bitte hängen Sie einen Datenträger immer aus, bevor Sie ihn entfernen."
+
+#: mediatray/mediaitem.py:247
+msgid "Eject"
+msgstr "Auswerfen"
+
+#: mediatray/mountitem.py:106
+msgid "Open in terminal"
+msgstr "Im Terminal öffnen"
 
 #: tipsH:1 tipsV:1
 msgid "Layout"
@@ -138,11 +132,11 @@ msgstr ""
 msgid "Separators"
 msgstr "Trenner"
 
-#: tipsH:3 tipsH:6 tipsH:18 tipsV:18
+#: tipsH:3 tipsH:6 tipsH:19 tipsV:19
 msgid "Left"
 msgstr "Links"
 
-#: tipsH:4 tipsH:7 tipsH:19 tipsV:19
+#: tipsH:4 tipsH:7 tipsH:20 tipsV:20
 msgid "Right"
 msgstr "Rechts"
 
@@ -155,77 +149,81 @@ msgid "Size"
 msgstr "Größe"
 
 #: tipsH:9 tipsV:9
+msgid "Minimum icon size:"
+msgstr "Minimale Symbolgröße:"
+
+#: tipsH:10 tipsV:10
 msgid "Maximum icon size:"
 msgstr "Maximale Symbolgröße:"
 
-#: tipsH:10 tipsV:10
+#: tipsH:11 tipsV:11
 msgid "Appearance"
 msgstr "Aussehen"
 
-#: tipsH:11 tipsV:11
+#: tipsH:12 tipsV:12
 msgid "Enable visual effects"
 msgstr "Visuelle Effekte aktivieren"
 
-#: tipsH:12 tipsV:12
+#: tipsH:13 tipsV:13
 msgid "Windows"
 msgstr "Fenster"
 
-#: tipsH:13 tipsV:13
+#: tipsH:14 tipsV:14
 msgid "Behaviour"
 msgstr "Verhalten"
 
-#: tipsH:14 tipsV:14
+#: tipsH:15 tipsV:15
 msgid "Show all workspaces"
 msgstr "Alle Arbeitsflächen anzeigen"
 
-#: tipsH:15 tipsV:15
+#: tipsH:16 tipsV:16
 msgid "Show arrow for volumes with more than one open window"
 msgstr "Pfeil anzeigen für Datenträger mit mehr als einem offenen Fenster"
 
-#: tipsH:16 tipsV:16
+#: tipsH:17 tipsV:17
 msgid "Pinboard Icons"
 msgstr "Pinwand-Symbole"
 
-#: tipsH:17 tipsV:17
+#: tipsH:18 tipsV:18
 msgid "Show icons on the pinboard"
 msgstr "Symbole auf der Pinwand anzeigen"
 
-#: tipsH:20 tipsV:3 tipsV:6 tipsV:20
+#: tipsH:21 tipsV:3 tipsV:6 tipsV:21
 msgid "Top"
 msgstr "Oben"
 
-#: tipsH:21 tipsV:4 tipsV:7 tipsV:21
+#: tipsH:22 tipsV:4 tipsV:7 tipsV:22
 msgid "Bottom"
 msgstr "Unten"
 
-#: tipsH:22 tipsV:22
+#: tipsH:23 tipsV:23
 msgid "Volumes"
 msgstr "Datenträger"
 
-#: tipsH:23 tipsV:23
+#: tipsH:24 tipsV:24
 msgid "Hide unmounted volumes"
 msgstr "Nicht eingehängte Datenträger ausblenden."
 
-#: tipsH:24 tipsV:24
+#: tipsH:25 tipsV:25
 msgid "Automatic mounting"
 msgstr "Automatisches Einhängen."
 
-#: tipsH:25 tipsV:25
+#: tipsH:26 tipsV:26
 msgid "No automatic mounting"
 msgstr "Kein automatisches Einhängen."
 
-#: tipsH:26 tipsV:26
+#: tipsH:27 tipsV:27
 msgid "Mount volume when inserted"
 msgstr "Eingelegten Datenträger einhängen"
 
-#: tipsH:27 tipsV:27
+#: tipsH:28 tipsV:28
 msgid "Open volume when inserted"
 msgstr "Eingelegten Datenträger öffnen"
 
-#: tipsH:28 tipsV:28
+#: tipsH:29 tipsV:29
 msgid "Notifications"
 msgstr "Benachrichtigungen"
 
-#: tipsH:29 tipsV:29
+#: tipsH:30 tipsV:30
 msgid "Show notifications about added/removed volumes."
 msgstr "Benachrichtigungen über eingelegte/entfernte Datenträger anzeigen."

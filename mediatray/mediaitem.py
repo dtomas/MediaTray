@@ -9,8 +9,9 @@ import rox
 from rox import filer
 
 from traylib import ICON_THEME
+from traylib.icons import ThemedIcon
 
-from mediatray.mounticon import MountIcon
+from mediatray.mountitem import MountItem
 
 
 SECTION_WINDOWS_AUTORUN = 'autorun'
@@ -62,46 +63,63 @@ def get_case_sensitive_path(path, root = '/'):
     return ''
 
 
-class MediaIcon(MountIcon):
+class MediaItem(MountItem):
 
-    def __init__(self, icon_config, win_config, mediaicon_config, volume,
+    def __init__(self, win_config, mediaitem_config, volume,
                  screen, volume_monitor):
-        self.__mediaicon_config = mediaicon_config
-        self.__mediaicon_config_signal_handlers = [
-            mediaicon_config.connect(
-                "hide-unmounted-changed",
-                lambda config: self.update_visibility()
+        self.__mediaitem_config = mediaitem_config
+        self.__mediaitem_config_signal_handlers = [
+            mediaitem_config.connect(
+                "hide-unmounted-changed", self.__hide_unmounted_changed
             )
         ]
         self.__volume = volume
-        MountIcon.__init__(
-            self, icon_config, win_config, screen, volume_monitor
-        )
+        MountItem.__init__(self, win_config, screen, volume_monitor)
 
         self.mount_label = _("Mount")
         self.unmount_label = _("Unmount")
-        self.__volume.connect("removed", lambda volume: self.__removed())
-        self.connect("unmounted", lambda self: self.update_visibility())
-        self.connect("mounted", lambda self: self.update_visibility())
+
+        self.__volume_handlers = [
+            self.__volume.connect("removed", self.__removed),
+        ]
+        self.connect("unmounted", self.__unmounted)
+        self.connect("mounted", self.__mounted)
+
+        self.connect("destroyed", self.__destroyed)
 
         mount = self.__volume.get_mount()
+
+    def __destroyed(self, item):
+        for handler in self.__mediaitem_config_signal_handlers:
+            self.__mediaitem_config.disconnect(handler)
+        for handler in self.__volume_handlers:
+            self.__volume.disconnect(handler)
+    
+    def __hide_unmounted_changed(self, config):
+        self.changed("is-visible")
+
+    def __unmounted(self, item):
+        self.changed("is-visible")
+
+    def __mounted(self, item):
+        self.changed("is-visible")
 
     def get_mount(self):
         return self.__volume.get_mount()
 
     def get_mounted_message(self):
-        return _("Volume \"%s\" has been mounted.") % self.name
+        return _("Volume \"%s\" has been mounted.") % self.get_base_name()
 
     def get_unmounted_message(self):
         return _(
             "Volume \"%s\" has been unmounted and can be safely removed."
-        ) % self.name
+        ) % self.get_base_name()
 
     def get_added_message(self):
-        return _("Volume \"%s\" has been inserted.") % self.name
+        return _("Volume \"%s\" has been inserted.") % self.get_base_name()
 
     def get_removed_message(self):
-        return _("Volume \"%s\" has been removed.") % self.name
+        return _("Volume \"%s\" has been removed.") % self.get_base_name()
 
     def get_removed_detail(self):
         return (
@@ -109,7 +127,7 @@ class MediaIcon(MountIcon):
             if self.is_mounted else ""
         )
 
-    def make_path(self):
+    def get_path(self):
         """The volume's mount point or C{None} if the volume is not mounted."""
         mount = self.__volume.get_mount()
         if mount is None:
@@ -124,12 +142,13 @@ class MediaIcon(MountIcon):
     # Signal handlers
 
     def __destroy(self):
-        for handler in self.__mediaicon_config_signal_handlers:
-            self.__mediaicon_config.disconnect(handler)
+        for handler in self.__mediaitem_config_signal_handlers:
+            self.__mediaitem_config.disconnect(handler)
 
-    def __removed(self):
-        for window in self.windows:
-            window.close(0)
+    def __removed(self, volume):
+        #for window in self.windows:
+        #    window.close(0)
+        self.destroy()
 
 
     # Actions
@@ -163,7 +182,7 @@ class MediaIcon(MountIcon):
         Get the path of the .DirIcon or an icon defined in Windows'
         autorun.inf.
         """
-        icon_path = MountIcon.get_individual_icon_path(self)
+        icon_path = MountItem.get_individual_icon_path(self)
         if icon_path is not None:
             return icon_path
 
@@ -178,15 +197,12 @@ class MediaIcon(MountIcon):
 
         return None
 
-    def get_fallback_icon_path():
-        return os.path.join(rox.app_dir, 'icons', 'drive-harddisk.png')
-
     
     # Windows autorun support
 
     def __read_windows_autorun(self):
         """Read path to icon and executable from Windows' autorun.inf."""
-        path = self.path
+        path = self.get_path()
         if path is None:
             return None
 
@@ -225,7 +241,7 @@ class MediaIcon(MountIcon):
     # Methods overridden from Icon.
 
     def get_menu_right(self):
-        menu = MountIcon.get_menu_right(self)
+        menu = MountItem.get_menu_right(self)
 
         if self.__volume.can_eject():
             eject_item = gtk.ImageMenuItem(_("Eject"))
@@ -239,21 +255,22 @@ class MediaIcon(MountIcon):
 
         return menu
 
-    def get_icon_names(self):
+    def get_icons(self):
         """Get the icon names for the volume."""
-        # Fallback icon, shipped with MediaTray.
-        icons = ["drive-harddisk"]
+        icons = MountItem.get_icons(self)
         icon = self.__volume.get_icon()
         if icon is not None and hasattr(icon, 'get_names'):
-            icons = icon.get_names() + icons
+            icons += [ThemedIcon(name) for name in icon.get_names()]
+        # Fallback icon, shipped with MediaTray.
+        icons.append(ThemedIcon("drive-harddisk"))
         return icons
 
-    def make_name(self):
+    def get_base_name(self):
         """Return the name of the volume."""
         return self.__volume.get_name()
 
-    def make_visibility(self):
-        return self.is_mounted or not self.__mediaicon_config.hide_unmounted
+    def is_visible(self):
+        return self.is_mounted or not self.__mediaitem_config.hide_unmounted
 
     volume = property(lambda self : self.__volume)
     """The underlying C{gio.Volume} object."""

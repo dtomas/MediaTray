@@ -4,6 +4,7 @@ import json
 from rox import filer
 
 from mediatray.config import config_dir
+from mediatray.mountitem import MountItem
 
 
 _volumes_on_pinboard_path = os.path.join(config_dir, 'volumes_on_pinboard')
@@ -37,22 +38,24 @@ if volumes_on_pinboard:
     finally:
         f.close()
 
+_paths = {}
 
-def add_icon_to_pinboard(icon, pinboard_config):
+def add_icon_to_pinboard(item, pinboard_config):
     """
     Add the volume to the pinboard.
 
     Only works if the volume is mounted and the pin option is set.
     """
-    path = icon.path
+    path = item.get_path()
     if path is None:
         return
-    icon_path = icon.get_icon_path()
+    _paths[item] = path
+    icon_path = item.find_icon_path()
     if icon_path is not None:
         filer.rpc.SetIcon(Path=path, Icon=icon_path)
     filer.rpc.PinboardAdd(
         Path=path,
-        Label=icon.name,
+        Label=item.get_name(),
         X=pinboard_config.pin_x,
         Y=pinboard_config.pin_y,
         Update=1,
@@ -66,9 +69,11 @@ def add_icon_to_pinboard(icon, pinboard_config):
             f.close()
 
 
-def remove_icon_from_pinboard(icon):
+def remove_icon_from_pinboard(item):
     """Remove the volume from the pinboard."""
-    path = icon.path
+    if item not in _paths:
+        return
+    path = _paths.pop(item)
     filer.rpc.PinboardRemove(Path=path)
     filer.rpc.UnsetIcon(Path=path)
     if path in volumes_on_pinboard:
@@ -82,55 +87,65 @@ def remove_icon_from_pinboard(icon):
 
 def manage_pinboard(tray, pinboard_config):
 
-    def icon_added(tray, icon):
-        if not icon.is_mounted:
+    def item_added(tray, box, item):
+        if not isinstance(item, MountItem):
+            return
+        if not item.is_mounted:
             return
         if not pinboard_config.pin:
             return
-        add_icon_to_pinboard(icon, pinboard_config)
+        add_icon_to_pinboard(item, pinboard_config)
 
-    def icon_mounted(tray, icon):
+    def item_mounted(tray, item):
         if not pinboard_config.pin:
             return
-        add_icon_to_pinboard(icon, pinboard_config)
+        add_icon_to_pinboard(item, pinboard_config)
 
-    def icon_unmounted(tray, icon):
+    def item_unmounted(tray, item):
         if not pinboard_config.pin:
             return
-        remove_icon_from_pinboard(icon)
+        remove_icon_from_pinboard(item)
 
-    def icon_removed(tray, icon):
+    def item_removed(tray, box, item):
+        if not isinstance(item, MountItem):
+            return
         if not pinboard_config.pin:
             return
-        remove_icon_from_pinboard(icon)
+        remove_icon_from_pinboard(item)
 
     def pin_changed(pinboard_config):
-        for icon in tray.icons:
-            if not icon.is_mounted:
-                continue
-            if pinboard_config.pin:
-                add_icon_to_pinboard(icon, pinboard_config)
-            else:
-                remove_icon_from_pinboard(icon)
+        for box in tray.boxes:
+            for item in box.items:
+                if not isinstance(item, MountItem):
+                    continue
+                if not item.is_mounted:
+                    continue
+                if pinboard_config.pin:
+                    add_icon_to_pinboard(item, pinboard_config)
+                else:
+                    remove_icon_from_pinboard(item)
 
     def pin_xy_changed(pinboard_config):
         """Called when the pin_x option has changed."""
         if not pinboard_config.pin:
             return
-        for icon in tray.icons:
-            if not icon.is_mounted:
-                continue
-            remove_icon_from_pinboard(icon)
-            add_icon_to_pinboard(icon, pinboard_config)
+        for box in tray.boxes:
+            for item in box.items:
+                if not isinstance(item, MountItem):
+                    continue
+                if not item.is_mounted:
+                    continue
+                remove_icon_from_pinboard(item)
+                add_icon_to_pinboard(item, pinboard_config)
 
     tray_handlers = []
     pinboard_handlers = []
 
     def manage():
-        tray_handlers.append(tray.connect("icon-added", icon_added))
-        tray_handlers.append(tray.connect("icon-removed", icon_removed))
-        tray_handlers.append(tray.connect("icon-mounted", icon_mounted))
-        tray_handlers.append(tray.connect("icon-unmounted", icon_unmounted))
+        tray_handlers.append(tray.connect("item-added", item_added))
+        tray_handlers.append(tray.connect("item-removed", item_removed))
+        tray_handlers.append(tray.connect("item-mounted", item_mounted))
+        tray_handlers.append(tray.connect("item-unmounted", item_unmounted))
         pinboard_handlers.append(
             pinboard_config.connect("pin-changed", pin_changed)
         )
@@ -145,10 +160,15 @@ def manage_pinboard(tray, pinboard_config):
     def unmanage():
         for handler in tray_handlers:
             tray.disconnect(handler)
+            tray_handlers.remove(handler)
         for handler in pinboard_handlers:
             pinboard_config.disconnect(handler)
-        for icon in tray.icons:
-            remove_icon_from_pinboard(icon)
-            yield None
+            pinboard_handlers.remove(handler)
+        for box in tray.boxes:
+            for item in box.items:
+                if not isinstance(item, MountItem):
+                    continue
+                remove_icon_from_pinboard(item)
+                yield None
 
     return manage, unmanage

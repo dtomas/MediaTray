@@ -4,8 +4,9 @@ import rox
 
 import gtk
 
-from traylib import *
-from traylib.menu_icon import MenuIcon
+from traylib import ICON_THEME
+from traylib.main_item import MainItem
+from traylib.icons import ThemedIcon
 
 from mediatray.host_editor import HostEditor
 
@@ -13,34 +14,35 @@ from mediatray.host_editor import HostEditor
 ICON_THEME.append_search_path(os.path.join(rox.app_dir, 'icons'))
 
 
-class MainIcon(MenuIcon):
+class MediaTrayMainItem(MainItem):
 
-    def __init__(self, tray, win_config, mediaicon_config, host_manager):
-        self.__mediaicon_config = mediaicon_config
+    def __init__(self, tray, tray_config, icon_config, win_config,
+                 mediaitem_config, host_manager):
+        self.__mediaitem_config = mediaitem_config
         self.__win_config = win_config
-        MenuIcon.__init__(self, tray)
+        MainItem.__init__(self, tray, tray_config, icon_config)
         self.__win_config_signal_handlers = [
             win_config.connect(
-                "all-workspaces-changed", lambda config: self.update_tooltip()
+                "all-workspaces-changed", lambda config: self.changed("name")
             )
         ]
-        self.__mediaicon_config_signal_handlers = [
-            mediaicon_config.connect(
-                "hide-unmounted-changed", lambda config: self.update_tooltip()
+        self.__mediaitem_config_signal_handlers = [
+            mediaitem_config.connect(
+                "hide-unmounted-changed", lambda config: self.changed("name")
             )
         ]
         self.__host_manager = host_manager
-        self.connect("destroy", self.__destroy)
+        self.connect("destroyed", self.__destroyed)
 
-    def __destroy(self, widget):
+    def __destroyed(self, item):
         for handler in self.__win_config_signal_handlers:
             self.__win_config.disconnect(handler)
-        for handler in self.__mediaicon_config_signal_handlers:
-            self.__mediaicon_config.disconnect(handler)
+        for handler in self.__mediaitem_config_signal_handlers:
+            self.__mediaitem_config.disconnect(handler)
 
     def click(self, time):
-        self.__mediaicon_config.hide_unmounted = (
-            not self.__mediaicon_config.hide_unmounted 
+        self.__mediaitem_config.hide_unmounted = (
+            not self.__mediaitem_config.hide_unmounted 
         )
 
     def mouse_wheel_up(self, time):
@@ -49,8 +51,8 @@ class MainIcon(MenuIcon):
     def mouse_wheel_down(self, time):
         self.__win_config.all_workspaces = False
 
-    def get_icon_names(self):
-        return ['computer']
+    def get_icons(self):
+        return [ThemedIcon('computer')]
 
     #def get_custom_menu_items(self):
     #    menu_item = gtk.ImageMenuItem(gtk.STOCK_ADD)
@@ -62,12 +64,12 @@ class MainIcon(MenuIcon):
         dialog = HostEditor(self.__host_manager)
         dialog.show()
 
-    def make_tooltip(self):
+    def get_name(self):
         if self.__win_config.all_workspaces:
             s = _("Scroll down to only show windows of this workspace.")
         else:
             s = _("Scroll up to show windows of all workspaces.")
-        if self.__mediaicon_config.hide_unmounted:
+        if self.__mediaitem_config.hide_unmounted:
             s += '\n' + _("Click to show unmounted volumes.")
         else:
             s += '\n' + _("Click to hide unmounted volumes.")
