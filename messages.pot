@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2015-04-09 11:08+CEST\n"
+"POT-Creation-Date: 2017-02-25 21:23+CET\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,11 +16,11 @@ msgstr ""
 
 
 #: mediatray/host_editor.py:11
-msgid "Edit Host"
+msgid "Add Host"
 msgstr ""
 
-#: mediatray/host_editor.py:11 mediatray/main_icon.py:48
-msgid "Add Host"
+#: mediatray/host_editor.py:11
+msgid "Edit Host"
 msgstr ""
 
 #: mediatray/host_editor.py:60
@@ -51,80 +51,76 @@ msgstr ""
 msgid "You must select a protocol."
 msgstr ""
 
-#: mediatray/hosticon.py:22
+#: mediatray/hostitem.py:22
 msgid "Connect"
 msgstr ""
 
-#: mediatray/hosticon.py:23
+#: mediatray/hostitem.py:23
 msgid "Disconnect"
 msgstr ""
 
-#: mediatray/hosticon.py:77
-msgid "Really remove host %s?"
-msgstr ""
-
-#: mediatray/main_icon.py:58
-msgid "Scroll down to only show windows of this workspace."
-msgstr ""
-
-#: mediatray/main_icon.py:60
-msgid "Scroll up to show windows of all workspaces."
-msgstr ""
-
-#: mediatray/main_icon.py:62
-msgid "Click to show unmounted volumes."
-msgstr ""
-
-#: mediatray/main_icon.py:64
-msgid "Click to hide unmounted volumes."
-msgstr ""
-
-#: mediatray/mediaicon.py:75
-msgid "Mount"
-msgstr ""
-
-#: mediatray/mediaicon.py:76
-msgid "Unmount"
-msgstr ""
-
-#: mediatray/mediaicon.py:207
-msgid "Eject"
-msgstr ""
-
-#: mediatray/mounticon.py:335
-msgid "Open in terminal"
-msgstr ""
-
-#: mediatray/notification_manager.py:24
-msgid "Volume \"%s\" has been mounted."
-msgstr ""
-
-#: mediatray/notification_manager.py:26
+#: mediatray/hostitem.py:42
 msgid "Connected to host \"%s\"."
 msgstr ""
 
-#: mediatray/notification_manager.py:37
-msgid "Volume \"%s\" has been unmounted and can be safely removed."
-msgstr ""
-
-#: mediatray/notification_manager.py:41
+#: mediatray/hostitem.py:45
 msgid "Disconnected from host \"%s\"."
 msgstr ""
 
-#: mediatray/notification_manager.py:54
+#: mediatray/hostitem.py:78
+msgid "Really remove host %s?"
+msgstr ""
+
+#: mediatray/main_item.py:69
+msgid "Scroll down to only show windows of this workspace."
+msgstr ""
+
+#: mediatray/main_item.py:71
+msgid "Scroll up to show windows of all workspaces."
+msgstr ""
+
+#: mediatray/main_item.py:73
+msgid "Click to show unmounted volumes."
+msgstr ""
+
+#: mediatray/main_item.py:75
+msgid "Click to hide unmounted volumes."
+msgstr ""
+
+#: mediatray/mediaitem.py:79
+msgid "Mount"
+msgstr ""
+
+#: mediatray/mediaitem.py:80
+msgid "Unmount"
+msgstr ""
+
+#: mediatray/mediaitem.py:111
+msgid "Volume \"%s\" has been mounted."
+msgstr ""
+
+#: mediatray/mediaitem.py:114
+msgid "Volume \"%s\" has been unmounted and can be safely removed."
+msgstr ""
+
+#: mediatray/mediaitem.py:119
 msgid "Volume \"%s\" has been inserted."
 msgstr ""
 
-#: mediatray/notification_manager.py:65
+#: mediatray/mediaitem.py:122
 msgid "Volume \"%s\" has been removed."
 msgstr ""
 
-#: mediatray/notification_manager.py:70
-msgid "Volume \"%s\" has been removed without unmounting."
+#: mediatray/mediaitem.py:126
+msgid "Please do always unmount a volume before removing it."
 msgstr ""
 
-#: mediatray/notification_manager.py:72
-msgid "Please do always unmount a volume before removing it."
+#: mediatray/mediaitem.py:247
+msgid "Eject"
+msgstr ""
+
+#: mediatray/mountitem.py:106
+msgid "Open in terminal"
 msgstr ""
 
 #: tipsH:1 tipsV:1
@@ -135,11 +131,11 @@ msgstr ""
 msgid "Separators"
 msgstr ""
 
-#: tipsH:3 tipsH:6 tipsH:18 tipsV:18
+#: tipsH:3 tipsH:6 tipsH:19 tipsV:19
 msgid "Left"
 msgstr ""
 
-#: tipsH:4 tipsH:7 tipsH:19 tipsV:19
+#: tipsH:4 tipsH:7 tipsH:20 tipsV:20
 msgid "Right"
 msgstr ""
 
@@ -152,78 +148,82 @@ msgid "Size"
 msgstr ""
 
 #: tipsH:9 tipsV:9
-msgid "Maximum icon size:"
+msgid "Minimum icon size:"
 msgstr ""
 
 #: tipsH:10 tipsV:10
-msgid "Appearance"
+msgid "Maximum icon size:"
 msgstr ""
 
 #: tipsH:11 tipsV:11
-msgid "Enable visual effects"
+msgid "Appearance"
 msgstr ""
 
 #: tipsH:12 tipsV:12
-msgid "Windows"
+msgid "Enable visual effects"
 msgstr ""
 
 #: tipsH:13 tipsV:13
-msgid "Behaviour"
+msgid "Windows"
 msgstr ""
 
 #: tipsH:14 tipsV:14
-msgid "Show all workspaces"
+msgid "Behaviour"
 msgstr ""
 
 #: tipsH:15 tipsV:15
-msgid "Show arrow for volumes with more than one open window"
+msgid "Show all workspaces"
 msgstr ""
 
 #: tipsH:16 tipsV:16
-msgid "Pinboard Icons"
+msgid "Show arrow for volumes with more than one open window"
 msgstr ""
 
 #: tipsH:17 tipsV:17
+msgid "Pinboard Icons"
+msgstr ""
+
+#: tipsH:18 tipsV:18
 msgid "Show icons on the pinboard"
 msgstr ""
 
-#: tipsH:20 tipsV:3 tipsV:6 tipsV:20
+#: tipsH:21 tipsV:3 tipsV:6 tipsV:21
 msgid "Top"
 msgstr ""
 
-#: tipsH:21 tipsV:4 tipsV:7 tipsV:21
+#: tipsH:22 tipsV:4 tipsV:7 tipsV:22
 msgid "Bottom"
 msgstr ""
 
-#: tipsH:22 tipsV:22
+#: tipsH:23 tipsV:23
 msgid "Volumes"
 msgstr ""
 
-#: tipsH:23 tipsV:23
+#: tipsH:24 tipsV:24
 msgid "Hide unmounted volumes"
 msgstr ""
 
-#: tipsH:24 tipsV:24
+#: tipsH:25 tipsV:25
 msgid "Automatic mounting"
 msgstr ""
 
-#: tipsH:25 tipsV:25
+#: tipsH:26 tipsV:26
 msgid "No automatic mounting"
 msgstr ""
 
-#: tipsH:26 tipsV:26
+#: tipsH:27 tipsV:27
 msgid "Mount volume when inserted"
 msgstr ""
 
-#: tipsH:27 tipsV:27
+#: tipsH:28 tipsV:28
 msgid "Open volume when inserted"
 msgstr ""
 
-#: tipsH:28 tipsV:28
+#: tipsH:29 tipsV:29
 msgid "Notifications"
 msgstr ""
 
-#: tipsH:29 tipsV:29
+#: tipsH:30 tipsV:30
 msgid "Show notifications about added/removed volumes."
 msgstr ""
 
