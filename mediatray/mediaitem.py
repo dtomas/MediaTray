@@ -241,7 +241,7 @@ class MediaItem(MountItem):
         menu = MountItem.get_menu_right(self)
 
         if self.__volume.can_eject():
-            eject_item = Gtk.ImageMenuItem(_("Eject"))
+            eject_item = Gtk.MenuItem.new_with_label(_("Eject"))
             eject_image = Gtk.image_new_from_pixbuf(
                 ICON_THEME.load_icon("media-eject", Gtk.IconSize.MENU, 0)
             )

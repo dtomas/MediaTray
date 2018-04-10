@@ -87,30 +87,23 @@ class MountItem(AWindowsItem):
             menu.prepend(Gtk.SeparatorMenuItem())
 
         if self.is_mounted:
-            unmount_item = Gtk.ImageMenuItem(Gtk.STOCK_CANCEL)
-            unmount_item.set_label(self.unmount_label)
+            unmount_item = Gtk.MenuItem.new_with_label(self.unmount_label)
             unmount_item.connect("activate", lambda item: self.unmount()) 
             menu.prepend(unmount_item)
         else:
-            mount_item = Gtk.ImageMenuItem(Gtk.STOCK_YES)
-            mount_item.set_label(self.mount_label)
+            mount_item = Gtk.MenuItem.new_with_label(self.mount_label)
             mount_item.connect("activate", lambda item: self.mount())
             menu.prepend(mount_item)
 
         menu.prepend(Gtk.SeparatorMenuItem())
 
-        open_in_terminal_item = Gtk.ImageMenuItem(_("Open in terminal"))
-        open_in_terminal_image = Gtk.Image.new_from_pixbuf(
-            ICON_THEME.load_icon("utilities-terminal",
-                                 Gtk.IconSize.MENU, 0)
-        )
-        open_in_terminal_item.set_image(open_in_terminal_image)
+        open_in_terminal_item = Gtk.MenuItem.new_with_label(_("Open in terminal"))
         open_in_terminal_item.connect(
             "activate", lambda item: self.open_in_terminal()
         )
         menu.prepend(open_in_terminal_item)
 
-        open_item = Gtk.ImageMenuItem(Gtk.STOCK_OPEN)
+        open_item = Gtk.MenuItem.new_with_label(_("Open"))
         open_item.connect("activate", lambda item: self.open())
         menu.prepend(open_item)
         return menu

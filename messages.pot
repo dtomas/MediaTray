@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2017-02-25 21:23+CET\n"
+"POT-Creation-Date: 2018-04-10 07:44+CEST\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -67,8 +67,16 @@ msgstr ""
 msgid "Disconnected from host \"%s\"."
 msgstr ""
 
+#: mediatray/hostitem.py:70
+msgid "Edit"
+msgstr ""
+
 #: mediatray/hostitem.py:78
 msgid "Really remove host %s?"
+msgstr ""
+
+#: mediatray/hostitem.py:82
+msgid "Remove"
 msgstr ""
 
 #: mediatray/main_item.py:69
@@ -87,40 +95,44 @@ msgstr ""
 msgid "Click to hide unmounted volumes."
 msgstr ""
 
-#: mediatray/mediaitem.py:79
+#: mediatray/mediaitem.py:74
 msgid "Mount"
 msgstr ""
 
-#: mediatray/mediaitem.py:80
+#: mediatray/mediaitem.py:75
 msgid "Unmount"
 msgstr ""
 
-#: mediatray/mediaitem.py:111
+#: mediatray/mediaitem.py:106
 msgid "Volume \"%s\" has been mounted."
 msgstr ""
 
-#: mediatray/mediaitem.py:114
+#: mediatray/mediaitem.py:109
 msgid "Volume \"%s\" has been unmounted and can be safely removed."
 msgstr ""
 
-#: mediatray/mediaitem.py:119
+#: mediatray/mediaitem.py:114
 msgid "Volume \"%s\" has been inserted."
 msgstr ""
 
-#: mediatray/mediaitem.py:122
+#: mediatray/mediaitem.py:117
 msgid "Volume \"%s\" has been removed."
 msgstr ""
 
-#: mediatray/mediaitem.py:126
+#: mediatray/mediaitem.py:121
 msgid "Please do always unmount a volume before removing it."
 msgstr ""
 
-#: mediatray/mediaitem.py:247
+#: mediatray/mediaitem.py:244
 msgid "Eject"
 msgstr ""
 
-#: mediatray/mountitem.py:106
+#: mediatray/mountitem.py:100
 msgid "Open in terminal"
+msgstr ""
+
+#: mediatray/mountitem.py:106
+msgid "Open"
 msgstr ""
 
 #: tipsH:1 tipsV:1

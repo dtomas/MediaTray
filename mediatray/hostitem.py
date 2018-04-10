@@ -67,7 +67,7 @@ class HostItem(MountItem):
         def edit(menu_item):
             HostEditor(self.__host_manager, self.__host).show()
 
-        menu_item = Gtk.ImageMenuItem(Gtk.STOCK_EDIT)
+        menu_item = Gtk.MenuItem.new_with_label(_("Edit"))
         menu_item.connect("activate", edit)
         menu.append(menu_item)
 
@@ -79,7 +79,7 @@ class HostItem(MountItem):
                     Gtk.STOCK_REMOVE):
                 self.__host.remove()
 
-        menu_item = Gtk.ImageMenuItem(Gtk.STOCK_REMOVE)
+        menu_item = Gtk.MenuItem.new_with_label(_("Remove"))
         menu_item.connect("activate", remove)
         menu.append(menu_item)
 
