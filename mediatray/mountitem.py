@@ -1,21 +1,17 @@
 import os
-import re
-import struct
-import json
 
+from gi.repository import Gio
 from gi.repository import Gtk
 from gi.repository import GObject
-from gi.repository import Gio
+from gi.repository import GdkPixbuf
 
 import rox
 from rox import filer, processes
 from rox.options import Option, OptionGroup
 
-from traylib import TARGET_WNCK_WINDOW_ID, TARGET_URI_LIST, ICON_THEME
+from traylib import TARGET_URI_LIST, ICON_THEME
 from traylib.winitem import AWindowsItem
 from traylib.icons import FileIcon
-
-from mediatray.config import config_dir
 
 
 icons_dir = os.path.join(rox.app_dir, 'icons')
@@ -52,7 +48,7 @@ class MountItem(AWindowsItem):
     def get_drag_source_targets(self):
         return (
             AWindowsItem.get_drag_source_targets(self) +
-            [("text/uri-list", 0, TARGET_URI_LIST)]
+            [Gtk.TargetEntry.new("text/uri-list", 0, TARGET_URI_LIST)]
         )
 
     def drag_data_get(self, context, data, info, time):
@@ -104,7 +100,7 @@ class MountItem(AWindowsItem):
         menu.prepend(Gtk.SeparatorMenuItem())
 
         open_in_terminal_item = Gtk.ImageMenuItem(_("Open in terminal"))
-        open_in_terminal_image = Gtk.image_new_from_pixbuf(
+        open_in_terminal_image = Gtk.Image.new_from_pixbuf(
             ICON_THEME.load_icon("utilities-terminal",
                                  Gtk.IconSize.MENU, 0)
         )
@@ -119,7 +115,7 @@ class MountItem(AWindowsItem):
         menu.prepend(open_item)
         return menu
 
-    def click(self, time=0L):
+    def click(self, time=0):
         """
         When a C{MediaIcon} is clicked, the volume is opened, or - if there
         are open windows - the menu of open windows is shown or - if there is
@@ -156,7 +152,7 @@ class MountItem(AWindowsItem):
         elif action == Gdk.DragAction.MOVE:
             self.copy(uri_list, True)
 
-    def spring_open(self, time = 0L):
+    def spring_open(self, time = 0):
         """
         When dragging an item over the menu for a while, the volume is opened
         or - if there is only one window - this window is activated, or - if
@@ -181,7 +177,7 @@ class MountItem(AWindowsItem):
                 return
             if on_unmount:
                 on_unmount()
-        mount.unmount(unmounted)
+        mount.unmount(Gio.MountUnmountFlags.NONE, None, unmounted)
 
     def mount(self, on_mount=None):
         """

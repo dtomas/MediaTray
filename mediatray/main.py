@@ -1,11 +1,13 @@
-from functools import partial
-
+import gi
 from gi.repository import Gio
+try:
+    gi.require_version('Wnck', '3.0')
+    from gi.repository import Wnck
+except ImportError:
+    Wnck = None
 
-import rox
 from rox.options import Option
 
-from traylib from gi.repository import Wnck
 from traylib.main import Main
 from traylib.winitem_config import WinItemConfig
 
@@ -21,7 +23,7 @@ class MediaTrayMain(Main):
     
     def __init__(self):
         Main.__init__(self, "MediaTray")
-        self.__screen = Wnck.Screen.get_default() if wnck is not None else None
+        self.__screen = Wnck.Screen.get_default() if Wnck is not None else None
 
     def init_options(self):
         Main.init_options(self)
@@ -72,7 +74,7 @@ class MediaTrayMain(Main):
             mediaitem_config=self.__mediaitem_config,
             screen=self.__screen,
             host_manager=HostManager(),
-            volume_monitor=Gio.volume_monitor_get(),
+            volume_monitor=Gio.VolumeMonitor.get(),
         )
 
     def options_changed(self):

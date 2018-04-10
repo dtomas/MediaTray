@@ -1,6 +1,6 @@
 import os
 import json
-import urlparse
+import urllib.parse
 
 from gi.repository import GObject
 
@@ -53,7 +53,7 @@ class HostManager(GObject.GObject):
             def uri(self, uri):
                 changed = hasattr(self, '_Host__uri')
                 self.__uri = uri
-                parsed_uri = urlparse.urlparse(uri)
+                parsed_uri = urllib.parse.urlparse(uri)
                 self.__name = parsed_uri.netloc
                 self.__protocol = parsed_uri.scheme
                 tmp = parsed_uri.netloc.split(':')

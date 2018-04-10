@@ -1,12 +1,7 @@
 import os
-from ConfigParser import RawConfigParser, NoOptionError
+from configparser import RawConfigParser, NoOptionError
 
-from gi.repository import Gtk
-
-from gi.repository import Gio
-
-import rox
-from rox import filer
+from gi.repository import Gtk, Gio
 
 from traylib import ICON_THEME
 from traylib.icons import ThemedIcon
@@ -166,7 +161,9 @@ class MediaItem(MountItem):
             mount = volume.get_mount()
             if on_mount is not None:
                 on_mount()
-        self.__volume.mount(Gtk.MountOperation(), mounted)
+        self.__volume.mount(
+            Gio.MountMountFlags.NONE, Gtk.MountOperation(), None, mounted
+        )
 
     def eject(self):
         """Eject the volume."""

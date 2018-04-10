@@ -2,6 +2,10 @@
 			Shows removable media
 			by Dennis Tomas
 
+3.0.0
+~~~~~
+Ported to Python3 and Gtk3.
+
 2.0.0
 ~~~~~
 Now using TrayLib 2.0, see TrayLib/Help/Changes.

@@ -10,7 +10,7 @@ def manage_hostitems(tray, host_manager, win_config, screen, volume_monitor):
         handlers = []
 
     def host_added(host_manager, host):
-        print("adding host %s" % host.name)
+        print(("adding host %s" % host.name))
         state.box.add_item(
             HostItem(win_config, screen, host_manager, host, volume_monitor)
         )
@@ -28,7 +28,7 @@ def manage_hostitems(tray, host_manager, win_config, screen, volume_monitor):
             host_manager.connect("host-added", host_added),
             host_manager.connect("host-removed", host_removed),
         ]
-        for host in host_manager.hosts.itervalues():
+        for host in host_manager.hosts.values():
             host_added(host_manager, host)
             yield None
 
