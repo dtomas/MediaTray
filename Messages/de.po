@@ -134,7 +134,7 @@ msgstr "Im Terminal öffnen"
 
 #: mediatray/mountitem.py:106
 msgid "Open"
-msgstr ""
+msgstr "Öffnen"
 
 #: tipsH:1 tipsV:1
 msgid "Layout"
