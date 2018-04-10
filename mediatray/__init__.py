@@ -1,6 +1,6 @@
 from functools import partial
 
-import gobject
+from gi.repository import GObject
 
 from traylib import *
 from traylib.managed_tray import ManagedTray
@@ -94,12 +94,12 @@ class MediaTray(ManagedTray):
 
     win_config = property(lambda self : self.__win_config)
 
-gobject.type_register(MediaTray)
-gobject.signal_new(
-    "item-mounted", MediaTray, gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE,
+GObject.type_register(MediaTray)
+GObject.signal_new(
+    "item-mounted", MediaTray, GObject.SignalFlags.RUN_FIRST, None,
     (MountItem,)
 )
-gobject.signal_new(
-    "item-unmounted", MediaTray, gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE,
+GObject.signal_new(
+    "item-unmounted", MediaTray, GObject.SignalFlags.RUN_FIRST, None,
     (MountItem,)
 )

@@ -11,7 +11,7 @@ def manage_mediaitems(tray, screen, win_config, mediaitem_config,
     Manages a L{mediatray.MediaTray}.
 
     @param tray: The tray to manage.
-    @param screen: The C{wnck.Screen} or C{None} to disable showing open
+    @param screen: The C{Wnck.Screen} or C{None} to disable showing open
         windows in icon menus.
     @param win_config: The config for C{WinIcon}s.
 

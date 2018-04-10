@@ -2,7 +2,7 @@ import os
 
 import rox
 
-import gtk
+from gi.repository import Gtk
 
 from traylib import ICON_THEME
 from traylib.main_item import MainItem
@@ -55,7 +55,7 @@ class MediaTrayMainItem(MainItem):
         return [ThemedIcon('computer')]
 
     #def get_custom_menu_items(self):
-    #    menu_item = gtk.ImageMenuItem(gtk.STOCK_ADD)
+    #    menu_item = Gtk.ImageMenuItem(Gtk.STOCK_ADD)
     #    menu_item.set_label(_("Add Host"))
     #    menu_item.connect("activate", self.__add_host)
     #    return [menu_item]

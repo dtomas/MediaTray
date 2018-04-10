@@ -3,9 +3,9 @@ import re
 import struct
 import json
 
-import gtk
-import gobject
-import gio
+from gi.repository import Gtk
+from gi.repository import GObject
+from gi.repository import Gio
 
 import rox
 from rox import filer, processes
@@ -20,10 +20,10 @@ from mediatray.config import config_dir
 
 icons_dir = os.path.join(rox.app_dir, 'icons')
 
-emblem_rox_mounted = gtk.gdk.pixbuf_new_from_file(
+emblem_rox_mounted = GdkPixbuf.Pixbuf.new_from_file(
     os.path.join(icons_dir, 'rox-mounted.png')
 )
-emblem_rox_mount = gtk.gdk.pixbuf_new_from_file(
+emblem_rox_mount = GdkPixbuf.Pixbuf.new_from_file(
     os.path.join(icons_dir, 'rox-mount.png')
 )
 
@@ -85,28 +85,28 @@ class MountItem(AWindowsItem):
         """
         menu = AWindowsItem.get_menu_right(self)
         if not menu:
-            menu = gtk.Menu()
+            menu = Gtk.Menu()
         else:
-            menu.prepend(gtk.SeparatorMenuItem())
-            menu.prepend(gtk.SeparatorMenuItem())
+            menu.prepend(Gtk.SeparatorMenuItem())
+            menu.prepend(Gtk.SeparatorMenuItem())
 
         if self.is_mounted:
-            unmount_item = gtk.ImageMenuItem(gtk.STOCK_CANCEL)
+            unmount_item = Gtk.ImageMenuItem(Gtk.STOCK_CANCEL)
             unmount_item.set_label(self.unmount_label)
             unmount_item.connect("activate", lambda item: self.unmount()) 
             menu.prepend(unmount_item)
         else:
-            mount_item = gtk.ImageMenuItem(gtk.STOCK_YES)
+            mount_item = Gtk.ImageMenuItem(Gtk.STOCK_YES)
             mount_item.set_label(self.mount_label)
             mount_item.connect("activate", lambda item: self.mount())
             menu.prepend(mount_item)
 
-        menu.prepend(gtk.SeparatorMenuItem())
+        menu.prepend(Gtk.SeparatorMenuItem())
 
-        open_in_terminal_item = gtk.ImageMenuItem(_("Open in terminal"))
-        open_in_terminal_image = gtk.image_new_from_pixbuf(
+        open_in_terminal_item = Gtk.ImageMenuItem(_("Open in terminal"))
+        open_in_terminal_image = Gtk.image_new_from_pixbuf(
             ICON_THEME.load_icon("utilities-terminal",
-                                 gtk.ICON_SIZE_MENU, 0)
+                                 Gtk.IconSize.MENU, 0)
         )
         open_in_terminal_item.set_image(open_in_terminal_image)
         open_in_terminal_item.connect(
@@ -114,7 +114,7 @@ class MountItem(AWindowsItem):
         )
         menu.prepend(open_in_terminal_item)
 
-        open_item = gtk.ImageMenuItem(gtk.STOCK_OPEN)
+        open_item = Gtk.ImageMenuItem(Gtk.STOCK_OPEN)
         open_item.connect("activate", lambda item: self.open())
         menu.prepend(open_item)
         return menu
@@ -151,9 +151,9 @@ class MountItem(AWindowsItem):
         If the volume is mounted, the files are copied (or moved) to the
         volume. If not, it is mounted and the files will be copied as soon as
         it's mounted.  (see property_changed())"""
-        if action == gtk.gdk.ACTION_COPY:
+        if action == Gdk.DragAction.COPY:
             self.copy(uri_list)
-        elif action == gtk.gdk.ACTION_MOVE:
+        elif action == Gdk.DragAction.MOVE:
             self.copy(uri_list, True)
 
     def spring_open(self, time = 0L):
@@ -188,7 +188,7 @@ class MountItem(AWindowsItem):
         Mount the volume.
 
         @param on_mount: function which gets called with the volume's
-            C{gio.Mount} object when the volume has been mounted.
+            C{Gio.Mount} object when the volume has been mounted.
         """
         if self.is_mounted:
             # Already mounted.
@@ -338,10 +338,10 @@ class MountItem(AWindowsItem):
     mountitem_config = property(lambda self : self.__mountitem_config)
     """C{MountItem}-related configuration."""
 
-gobject.type_register(MountItem)
-gobject.signal_new(
-    "mounted", MountItem, gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ()
+GObject.type_register(MountItem)
+GObject.signal_new(
+    "mounted", MountItem, GObject.SignalFlags.RUN_FIRST, None, ()
 )
-gobject.signal_new(
-    "unmounted", MountItem, gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ()
+GObject.signal_new(
+    "unmounted", MountItem, GObject.SignalFlags.RUN_FIRST, None, ()
 )

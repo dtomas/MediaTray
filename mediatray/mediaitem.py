@@ -1,9 +1,9 @@
 import os
 from ConfigParser import RawConfigParser, NoOptionError
 
-import gtk
+from gi.repository import Gtk
 
-import gio
+from gi.repository import Gio
 
 import rox
 from rox import filer
@@ -158,7 +158,7 @@ class MediaItem(MountItem):
         Mount the volume.
 
         @param on_mount: function which gets called with the volume's
-            C{gio.Mount} object when the volume has been mounted.
+            C{Gio.Mount} object when the volume has been mounted.
         """
         def mounted(volume, result):
             if not volume.mount_finish(result):
@@ -166,7 +166,7 @@ class MediaItem(MountItem):
             mount = volume.get_mount()
             if on_mount is not None:
                 on_mount()
-        self.__volume.mount(gtk.MountOperation(), mounted)
+        self.__volume.mount(Gtk.MountOperation(), mounted)
 
     def eject(self):
         """Eject the volume."""
@@ -244,9 +244,9 @@ class MediaItem(MountItem):
         menu = MountItem.get_menu_right(self)
 
         if self.__volume.can_eject():
-            eject_item = gtk.ImageMenuItem(_("Eject"))
-            eject_image = gtk.image_new_from_pixbuf(
-                ICON_THEME.load_icon("media-eject", gtk.ICON_SIZE_MENU, 0)
+            eject_item = Gtk.ImageMenuItem(_("Eject"))
+            eject_image = Gtk.image_new_from_pixbuf(
+                ICON_THEME.load_icon("media-eject", Gtk.IconSize.MENU, 0)
             )
             eject_item.set_image(eject_image)
             eject_item.set_use_stock(False)
@@ -273,4 +273,4 @@ class MediaItem(MountItem):
         return self.is_mounted or not self.__mediaitem_config.hide_unmounted
 
     volume = property(lambda self : self.__volume)
-    """The underlying C{gio.Volume} object."""
+    """The underlying C{Gio.Volume} object."""

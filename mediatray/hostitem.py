@@ -1,7 +1,7 @@
 import os
 
-import gio
-import gtk
+from gi.repository import Gio
+from gi.repository import Gtk
 
 import rox
 
@@ -16,7 +16,7 @@ class HostItem(MountItem):
     def __init__(self, win_config, screen, host_manager, host, volume_monitor):
         self.__host_manager = host_manager
         self.__host = host
-        self.__file = gio.File(host.uri)
+        self.__file = Gio.File(host.uri)
         MountItem.__init__(self, win_config, screen, volume_monitor)
 
         self.mount_label = _("Connect")
@@ -25,7 +25,7 @@ class HostItem(MountItem):
 
     def __host_changed(self, host):
         def update_file():
-            self.__file = gio.File(host.uri)
+            self.__file = Gio.File(host.uri)
             self.changed("name", "emblem")
         if self.is_mounted:
             self.unmount(on_unmount=update_file)
@@ -35,7 +35,7 @@ class HostItem(MountItem):
     def get_mount(self):
         try:
             return self.__file.find_enclosing_mount(None)
-        except gio.Error:
+        except Gio.Error:
             return None
 
     def get_mounted_message(self):
@@ -51,7 +51,7 @@ class HostItem(MountItem):
         def mounted(data, result):
             if self.__file.mount_enclosing_volume_finish(result) and on_mount:
                 on_mount()
-        self.__file.mount_enclosing_volume(gtk.MountOperation(), mounted)
+        self.__file.mount_enclosing_volume(Gtk.MountOperation(), mounted)
 
     def get_icons(self):
         return [ThemedIcon('network-server')]
@@ -62,24 +62,24 @@ class HostItem(MountItem):
     def get_menu_right(self):
         menu = MountItem.get_menu_right(self)
 
-        menu.append(gtk.SeparatorMenuItem())
+        menu.append(Gtk.SeparatorMenuItem())
 
         def edit(menu_item):
             HostEditor(self.__host_manager, self.__host).show()
 
-        menu_item = gtk.ImageMenuItem(gtk.STOCK_EDIT)
+        menu_item = Gtk.ImageMenuItem(Gtk.STOCK_EDIT)
         menu_item.connect("activate", edit)
         menu.append(menu_item)
 
-        menu.append(gtk.SeparatorMenuItem())
+        menu.append(Gtk.SeparatorMenuItem())
 
         def remove(menu_item):
             if rox.confirm(
                     _("Really remove host %s?") % self.__host.name,
-                    gtk.STOCK_REMOVE):
+                    Gtk.STOCK_REMOVE):
                 self.__host.remove()
 
-        menu_item = gtk.ImageMenuItem(gtk.STOCK_REMOVE)
+        menu_item = Gtk.ImageMenuItem(Gtk.STOCK_REMOVE)
         menu_item.connect("activate", remove)
         menu.append(menu_item)
 

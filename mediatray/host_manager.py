@@ -2,7 +2,7 @@ import os
 import json
 import urlparse
 
-import gobject
+from gi.repository import GObject
 
 from mediatray.config import config_dir
 
@@ -32,17 +32,17 @@ def _save_hosts():
         f.close()
 
 
-class HostManager(gobject.GObject):
+class HostManager(GObject.GObject):
     
     def __init__(self):
-        gobject.GObject.__init__(self)
+        GObject.GObject.__init__(self)
 
         host_manager = self
 
-        class Host(gobject.GObject):
+        class Host(GObject.GObject):
 
             def __init__(self, uri):
-                gobject.GObject.__init__(self)
+                GObject.GObject.__init__(self)
                 self.uri = uri
 
             @property
@@ -82,9 +82,9 @@ class HostManager(gobject.GObject):
             path = property(lambda self : self.__path)
             title = property(lambda self : self.__title)
 
-        gobject.type_register(Host)
-        gobject.signal_new(
-            "changed", Host, gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE, ()
+        GObject.type_register(Host)
+        GObject.signal_new(
+            "changed", Host, GObject.SignalFlags.RUN_FIRST, None, ()
         )
 
         self.__Host = Host
@@ -114,12 +114,12 @@ class HostManager(gobject.GObject):
     hosts = property(lambda self : self.__hosts)
 
 
-gobject.type_register(HostManager)
-gobject.signal_new(
-    "host-added", HostManager, gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE,
-    (gobject.GObject,)
+GObject.type_register(HostManager)
+GObject.signal_new(
+    "host-added", HostManager, GObject.SignalFlags.RUN_FIRST, None,
+    (GObject.GObject,)
 )
-gobject.signal_new(
-    "host-removed", HostManager, gobject.SIGNAL_RUN_FIRST, gobject.TYPE_NONE,
-    (gobject.GObject,)
+GObject.signal_new(
+    "host-removed", HostManager, GObject.SignalFlags.RUN_FIRST, None,
+    (GObject.GObject,)
 )

@@ -1,47 +1,47 @@
 import os
 
-import gtk
-import gobject
+from gi.repository import Gtk
+from gi.repository import GObject
 
 
-class HostEditor(gtk.Dialog):
+class HostEditor(Gtk.Dialog):
     
     def __init__(self, host_manager, host=None):
-        gtk.Dialog.__init__(self,
+        GObject.GObject.__init__(self,
                             _("Add Host") if host is None else _("Edit Host"), 
-                            buttons = (gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT,
-                                       gtk.STOCK_SAVE if host is not None
-                                       else gtk.STOCK_ADD, gtk.RESPONSE_ACCEPT))
+                            buttons = (Gtk.STOCK_CANCEL, Gtk.ResponseType.REJECT,
+                                       Gtk.STOCK_SAVE if host is not None
+                                       else Gtk.STOCK_ADD, Gtk.ResponseType.ACCEPT))
         self.__host_manager = host_manager
         self.__host = host
 
 
-        table = gtk.Table()
+        table = Gtk.Table()
 
-        self.vbox.pack_start(table)
+        self.vbox.pack_start(table, True, True, 0)
 
-        self.__protocols_model = gtk.ListStore(
-            gobject.TYPE_STRING, gobject.TYPE_STRING
+        self.__protocols_model = Gtk.ListStore(
+            GObject.TYPE_STRING, GObject.TYPE_STRING
         )
         self.__protocols_model.append(["SSH", "ssh"])
         self.__protocols_model.append(["FTP", "ftp"])
         self.__protocols_model.append(["WebDAV", "dav"])
         self.__protocols_model.append(["SMB", "smb"])
-        self.__protocol_select = gtk.ComboBox()
+        self.__protocol_select = Gtk.ComboBox()
         self.__protocol_select.set_entry_text_column(0)
         self.__protocol_select.set_model(self.__protocols_model)
-        cell = gtk.CellRendererText()
+        cell = Gtk.CellRendererText()
         self.__protocol_select.pack_start(cell, True)
         self.__protocol_select.add_attribute(cell, 'text', 0)
 
-        self.__hostname_input = gtk.Entry()
-        self.__username_input = gtk.Entry()
-        self.__path_input = gtk.Entry()
-        self.__port_select = gtk.SpinButton(gtk.Adjustment(0, 0, 65534, 1), 1)
+        self.__hostname_input = Gtk.Entry()
+        self.__username_input = Gtk.Entry()
+        self.__path_input = Gtk.Entry()
+        self.__port_select = Gtk.SpinButton(Gtk.Adjustment(0, 0, 65534, 1), 1)
 
-        self.__hostname_error = gtk.Label()
-        self.__port_error = gtk.Label()
-        self.__protocol_error = gtk.Label()
+        self.__hostname_error = Gtk.Label()
+        self.__port_error = Gtk.Label()
+        self.__protocol_error = Gtk.Label()
 
         if self.__host is not None:
             self.__hostname_input.set_text(self.__host.hostname)
@@ -57,12 +57,12 @@ class HostEditor(gtk.Dialog):
                 iter = self.__protocols_model.iter_next(iter)
 
         table.attach(self.__protocol_error, 0, 2, 0, 1)
-        table.attach(gtk.Label(_("Protocol")), 0, 1, 1, 2)
+        table.attach(Gtk.Label(label=_("Protocol")), 0, 1, 1, 2)
         table.attach(self.__hostname_error, 0, 2, 2, 3)
-        table.attach(gtk.Label(_("Hostname")), 0, 1, 3, 4)
-        table.attach(gtk.Label(_("Username")), 0, 1, 4, 5)
-        table.attach(gtk.Label(_("Port")), 0, 1, 5, 6)
-        table.attach(gtk.Label(_("Path")), 0, 1, 6, 7)
+        table.attach(Gtk.Label(label=_("Hostname")), 0, 1, 3, 4)
+        table.attach(Gtk.Label(label=_("Username")), 0, 1, 4, 5)
+        table.attach(Gtk.Label(label=_("Port")), 0, 1, 5, 6)
+        table.attach(Gtk.Label(label=_("Path")), 0, 1, 6, 7)
 
         table.attach(self.__protocol_select, 1, 2, 1, 2)
         table.attach(self.__hostname_input, 1, 2, 3, 4)
@@ -76,7 +76,7 @@ class HostEditor(gtk.Dialog):
 
         def response(dialog, response_id):
             clear_errors()
-            if response_id == gtk.RESPONSE_ACCEPT:
+            if response_id == Gtk.ResponseType.ACCEPT:
                 has_error = False
                 hostname = self.__hostname_input.get_text()
                 if not hostname:
