@@ -20,7 +20,7 @@ from mediatray.host_manager import HostManager
 
 
 class MediaTrayMain(Main):
-    
+
     def __init__(self):
         Main.__init__(self, "MediaTray")
         self.__screen = Wnck.Screen.get_default() if Wnck is not None else None
@@ -35,7 +35,7 @@ class MediaTrayMain(Main):
         self.__o_automount = Option("automount", AUTOMOUNT)
         self.__o_show_notifications = Option("show_notifications", True)
         self.__o_hide_unmounted = Option("hide_unmounted", True)
- 
+
     def init_config(self):
         Main.init_config(self)
         self.__win_config = WinItemConfig(
@@ -80,7 +80,7 @@ class MediaTrayMain(Main):
     def options_changed(self):
         if self.__o_arrow.has_changed:
             self.__win_config.arrow = self.__o_arrow.int_value
-    
+
         if self.__o_all_workspaces.has_changed:
             self.__win_config.all_workspaces = bool(
                 self.__o_all_workspaces.int_value

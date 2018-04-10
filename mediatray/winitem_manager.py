@@ -30,7 +30,7 @@ def manage_winitems(tray, win_config, screen):
                 else:
                     if path.startswith(os.path.realpath(item.get_path())):
                         item.add_window_item(window_item)
-    
+
     def window_item_destroyed(window_item):
         for handler in state.window_item_handlers.pop(window_item):
             window_item.disconnect(handler)

@@ -1,5 +1,3 @@
-from rox import processes
-
 from traylib.item_box import ItemBox
 
 from mediatray.mediaitem import MediaItem

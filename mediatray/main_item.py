@@ -2,8 +2,6 @@ import os
 
 import rox
 
-from gi.repository import Gtk
-
 from traylib import ICON_THEME
 from traylib.main_item import MainItem
 from traylib.icons import ThemedIcon
@@ -42,7 +40,7 @@ class MediaTrayMainItem(MainItem):
 
     def click(self, time):
         self.__mediaitem_config.hide_unmounted = (
-            not self.__mediaitem_config.hide_unmounted 
+            not self.__mediaitem_config.hide_unmounted
         )
 
     def mouse_wheel_up(self, time):

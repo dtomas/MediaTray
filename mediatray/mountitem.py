@@ -1,15 +1,12 @@
 import os
 
-from gi.repository import Gio
-from gi.repository import Gtk
-from gi.repository import GObject
-from gi.repository import GdkPixbuf
+from gi.repository import Gio, Gtk, GObject, Gdk, GdkPixbuf
 
 import rox
 from rox import filer, processes
 from rox.options import Option, OptionGroup
 
-from traylib import TARGET_URI_LIST, ICON_THEME
+from traylib import TARGET_URI_LIST
 from traylib.winitem import AWindowsItem
 from traylib.icons import FileIcon
 
@@ -42,7 +39,6 @@ class MountItem(AWindowsItem):
             "unmounted", self.__unmounted
         ) if mount is not None else None
 
-    
     # Methods from Item:
 
     def get_drag_source_targets(self):
@@ -62,7 +58,7 @@ class MountItem(AWindowsItem):
     def get_icons(self):
         """
         Get the path to the icon.
-        
+
         This may be a .DirIcon, an icon defined in Windows' autorun.inf or
         an icon from the current icon theme.
         """
@@ -88,7 +84,7 @@ class MountItem(AWindowsItem):
 
         if self.is_mounted:
             unmount_item = Gtk.MenuItem.new_with_label(self.unmount_label)
-            unmount_item.connect("activate", lambda item: self.unmount()) 
+            unmount_item.connect("activate", lambda item: self.unmount())
             menu.prepend(unmount_item)
         else:
             mount_item = Gtk.MenuItem.new_with_label(self.mount_label)
@@ -145,7 +141,7 @@ class MountItem(AWindowsItem):
         elif action == Gdk.DragAction.MOVE:
             self.copy(uri_list, True)
 
-    def spring_open(self, time = 0):
+    def spring_open(self, time=0):
         """
         When dragging an item over the menu for a while, the volume is opened
         or - if there is only one window - this window is activated, or - if
@@ -155,7 +151,6 @@ class MountItem(AWindowsItem):
             return True
         self.open()
         return False
-
 
     # Actions
 
@@ -222,7 +217,7 @@ class MountItem(AWindowsItem):
     def open_in_terminal(self):
         """
         Open the volume's mount point in a terminal.
-        
+
         The terminal command is read from ROX-Filer's menu_xterm option.
         """
         def open():
@@ -238,7 +233,7 @@ class MountItem(AWindowsItem):
             open()
 
     def copy(self, uri_list, move=False):
-        """Copy or move uris to the volume (via ROX-Filer).""" 
+        """Copy or move uris to the volume (via ROX-Filer)."""
 
         def copy():
             if move:
@@ -253,11 +248,10 @@ class MountItem(AWindowsItem):
         if not self.is_mounted:
             self._mount(on_mount=copy)
         else:
-            copy(mount)
-
+            copy()
 
     # Methods to be implemented by subclasses:
-    
+
     def get_mount(self):
         raise NotImplementedError
 
@@ -275,7 +269,6 @@ class MountItem(AWindowsItem):
 
     def get_removed_detail(self):
         return None
-
 
     # Signal handlers
 
@@ -303,7 +296,6 @@ class MountItem(AWindowsItem):
             self.__unmounted_handler = None
         self.emit("unmounted")
 
-
     # Icon handling
 
     def get_individual_icon_path(self):
@@ -319,13 +311,13 @@ class MountItem(AWindowsItem):
 
         return None
 
-
     @property
     def is_mounted(self):
         return self.__is_mounted
 
-    mountitem_config = property(lambda self : self.__mountitem_config)
+    mountitem_config = property(lambda self: self.__mountitem_config)
     """C{MountItem}-related configuration."""
+
 
 GObject.type_register(MountItem)
 GObject.signal_new(

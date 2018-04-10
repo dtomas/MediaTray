@@ -40,6 +40,7 @@ if volumes_on_pinboard:
 
 _paths = {}
 
+
 def add_icon_to_pinboard(item, pinboard_config):
     """
     Add the volume to the pinboard.

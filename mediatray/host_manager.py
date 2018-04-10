@@ -33,7 +33,7 @@ def _save_hosts():
 
 
 class HostManager(GObject.GObject):
-    
+
     def __init__(self):
         GObject.GObject.__init__(self)
 
@@ -74,13 +74,13 @@ class HostManager(GObject.GObject):
             def remove(self):
                 host_manager.remove_host(self.__uri)
 
-            protocol = property(lambda self : self.__protocol)
-            name = property(lambda self : self.__name)
-            hostname = property(lambda self : self.__hostname)
-            username = property(lambda self : self.__username)
-            port = property(lambda self : self.__port)
-            path = property(lambda self : self.__path)
-            title = property(lambda self : self.__title)
+            protocol = property(lambda self: self.__protocol)
+            name = property(lambda self: self.__name)
+            hostname = property(lambda self: self.__hostname)
+            username = property(lambda self: self.__username)
+            port = property(lambda self: self.__port)
+            path = property(lambda self: self.__path)
+            title = property(lambda self: self.__title)
 
         GObject.type_register(Host)
         GObject.signal_new(
@@ -111,7 +111,7 @@ class HostManager(GObject.GObject):
         _save_hosts()
         self.emit("host-removed", self.__hosts.pop(uri))
 
-    hosts = property(lambda self : self.__hosts)
+    hosts = property(lambda self: self.__hosts)
 
 
 GObject.type_register(HostManager)

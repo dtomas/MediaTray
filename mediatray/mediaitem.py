@@ -13,14 +13,10 @@ SECTION_WINDOWS_AUTORUN = 'autorun'
 
 
 class WindowsAutoRun(object):
-    
+
     def __init__(self):
         self.__exe = ''
         self.__icon = ''
-
-    @property
-    def icon(self):
-        return self.__icon
 
     @property
     def exe(self):
@@ -32,7 +28,7 @@ class WindowsAutoRun(object):
             None if exe is None
             else exe.strip(' \\').replace('\\', os.path.sep)
         )
-            
+
     @property
     def icon(self):
         return self.__icon
@@ -45,7 +41,7 @@ class WindowsAutoRun(object):
         )
 
 
-def get_case_sensitive_path(path, root = '/'):
+def get_case_sensitive_path(path, root='/'):
     """Search for a case sensitive path equivalent to the given path.
     root is the portion of the path that exists."""
     if path == root:
@@ -82,14 +78,12 @@ class MediaItem(MountItem):
 
         self.connect("destroyed", self.__destroyed)
 
-        mount = self.__volume.get_mount()
-
     def __destroyed(self, item):
         for handler in self.__mediaitem_config_signal_handlers:
             self.__mediaitem_config.disconnect(handler)
         for handler in self.__volume_handlers:
             self.__volume.disconnect(handler)
-    
+
     def __hide_unmounted_changed(self, config):
         self.changed("is-visible")
 
@@ -133,7 +127,6 @@ class MediaItem(MountItem):
             return None
         return root.get_path()
 
-
     # Signal handlers
 
     def __destroy(self):
@@ -144,7 +137,6 @@ class MediaItem(MountItem):
         #for window in self.windows:
         #    window.close(0)
         self.destroy()
-
 
     # Actions
 
@@ -158,7 +150,6 @@ class MediaItem(MountItem):
         def mounted(volume, result):
             if not volume.mount_finish(result):
                 return
-            mount = volume.get_mount()
             if on_mount is not None:
                 on_mount()
         self.__volume.mount(
@@ -170,7 +161,6 @@ class MediaItem(MountItem):
         def ejected(volume, result):
             self.__volume.eject_finish(result)
         self.__volume.eject(ejected)
-
 
     # Icon handling
 
@@ -186,6 +176,7 @@ class MediaItem(MountItem):
         # Try to read icon from windows autorun.
         windows_autorun = self.__read_windows_autorun()
         if windows_autorun is not None and windows_autorun.icon is not None:
+            root_path = self.get_path()
             icon_path = get_case_sensitive_path(
                 os.path.join(root_path, windows_autorun.icon), root_path
             )
@@ -194,7 +185,6 @@ class MediaItem(MountItem):
 
         return None
 
-    
     # Windows autorun support
 
     def __read_windows_autorun(self):
@@ -220,20 +210,19 @@ class MediaItem(MountItem):
         try:
             icon = parser.get(section, "icon")
         except NoOptionError:
-            pass # no icon
-           
+            pass  # no icon
+
         try:
             exe = parser.get(section, "open")
         except NoOptionError:
-            exe = None # no exe
-        
+            exe = None  # no exe
+
         windows_autorun = WindowsAutoRun()
         if icon and '..' not in icon:
             windows_autorun.icon = icon
         if '..' not in exe:
             windows_autorun.exe = exe
         return windows_autorun
-
 
     # Methods overridden from Icon.
 
@@ -247,7 +236,7 @@ class MediaItem(MountItem):
             )
             eject_item.set_image(eject_image)
             eject_item.set_use_stock(False)
-            eject_item.connect("activate", lambda item: self.eject()) 
+            eject_item.connect("activate", lambda item: self.eject())
             menu.insert(eject_item, 3)
 
         return menu
@@ -269,5 +258,5 @@ class MediaItem(MountItem):
     def is_visible(self):
         return self.is_mounted or not self.__mediaitem_config.hide_unmounted
 
-    volume = property(lambda self : self.__volume)
+    volume = property(lambda self: self.__volume)
     """The underlying C{Gio.Volume} object."""

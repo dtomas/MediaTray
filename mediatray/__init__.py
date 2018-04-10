@@ -2,14 +2,13 @@ from functools import partial
 
 from gi.repository import GObject
 
-from traylib import *
 from traylib.managed_tray import ManagedTray
 from traylib.main_box_manager import manage_main_box
 
 from mediatray.main_item import MediaTrayMainItem
 from mediatray.mountitem import MountItem
 from mediatray.mediaitem_manager import manage_mediaitems
-from mediatray.hostitem_manager import manage_hostitems
+#from mediatray.hostitem_manager import manage_hostitems
 from mediatray.notification_manager import manage_notifications
 from mediatray.pinboard_manager import manage_pinboard
 from mediatray.automount_manager import manage_automount
@@ -79,7 +78,7 @@ class MediaTray(ManagedTray):
             item.connect("mounted", self.__item_mounted),
             item.connect("unmounted", self.__item_unmounted),
         ]
-    
+
     def __item_removed(self, tray, box, item):
         if not isinstance(item, MountItem):
             return
@@ -92,7 +91,8 @@ class MediaTray(ManagedTray):
     def __item_unmounted(self, item):
         self.emit("item-unmounted", item)
 
-    win_config = property(lambda self : self.__win_config)
+    win_config = property(lambda self: self.__win_config)
+
 
 GObject.type_register(MediaTray)
 GObject.signal_new(

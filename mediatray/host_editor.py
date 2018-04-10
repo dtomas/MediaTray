@@ -1,20 +1,20 @@
-import os
-
 from gi.repository import Gtk
 from gi.repository import GObject
 
 
 class HostEditor(Gtk.Dialog):
-    
+
     def __init__(self, host_manager, host=None):
-        GObject.GObject.__init__(self,
-                            _("Add Host") if host is None else _("Edit Host"), 
-                            buttons = (Gtk.STOCK_CANCEL, Gtk.ResponseType.REJECT,
-                                       Gtk.STOCK_SAVE if host is not None
-                                       else Gtk.STOCK_ADD, Gtk.ResponseType.ACCEPT))
+        GObject.GObject.__init__(
+            self, _("Add Host") if host is None else _("Edit Host"),
+            buttons=(
+                Gtk.STOCK_CANCEL, Gtk.ResponseType.REJECT,
+                Gtk.STOCK_SAVE if host is not None
+                else Gtk.STOCK_ADD, Gtk.ResponseType.ACCEPT
+            ),
+        )
         self.__host_manager = host_manager
         self.__host = host
-
 
         table = Gtk.Table()
 
