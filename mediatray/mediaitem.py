@@ -160,7 +160,7 @@ class MediaItem(MountItem):
         """Eject the volume."""
         def ejected(volume, result):
             self.__volume.eject_finish(result)
-        self.__volume.eject(ejected)
+        self.__volume.eject(Gio.MountMountFlags.NONE, None, ejected)
 
     # Icon handling
 
@@ -231,11 +231,6 @@ class MediaItem(MountItem):
 
         if self.__volume.can_eject():
             eject_item = Gtk.MenuItem.new_with_label(_("Eject"))
-            eject_image = Gtk.image_new_from_pixbuf(
-                ICON_THEME.load_icon("media-eject", Gtk.IconSize.MENU, 0)
-            )
-            eject_item.set_image(eject_image)
-            eject_item.set_use_stock(False)
             eject_item.connect("activate", lambda item: self.eject())
             menu.insert(eject_item, 3)
 
