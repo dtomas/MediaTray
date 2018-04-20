@@ -3,7 +3,6 @@ from configparser import RawConfigParser, NoOptionError
 
 from gi.repository import Gtk, Gio
 
-from traylib import ICON_THEME
 from traylib.icons import ThemedIcon
 
 from mediatray.mountitem import MountItem

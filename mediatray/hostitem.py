@@ -1,5 +1,3 @@
-import os
-
 from gi.repository import Gio
 from gi.repository import Gtk
 
