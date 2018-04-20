@@ -161,11 +161,11 @@ class MountItem(AWindowsItem):
         mount = self.get_mount()
 
         def unmounted(mount, result):
-            if not mount.unmount_finish(result):
+            if not mount.unmount_with_operation_finish(result):
                 return
             if on_unmount:
                 on_unmount()
-        mount.unmount(Gio.MountUnmountFlags.NONE, None, unmounted)
+        mount.unmount_with_operation(Gio.MountUnmountFlags.NONE, None, None, unmounted)
 
     def mount(self, on_mount=None):
         """
